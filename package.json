@@ -1,0 +1,25 @@
+{
+  "name": "RPG_Web_Engine",
+  "version": "0.0.1",
+  "description": "RPG Virtual Tabletop Aid",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolaskagami/RPG_Web_Engine"
+  },
+  "keywords": [
+    "Phaser",
+    "RPG",
+    "Node.js",
+    "socket.io"
+  ],
+  "author": "Nicolas Kagami",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  }
+}
