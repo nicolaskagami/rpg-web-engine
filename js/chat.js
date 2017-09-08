@@ -69,7 +69,8 @@ $(".mytext").on("keyup", function(e)
         var text = $(this).val();
         if (text !== "")
         {
-            insertChat("me", text);              
+            //insertChat("me", text);              
+            Client.sendText(text);
             $(this).val('');
         }
     }

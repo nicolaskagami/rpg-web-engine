@@ -40,6 +40,10 @@ io.on('connection',function(socket){
         socket.on('disconnect',function(){
             io.emit('remove',socket.player.id);
         });
+        socket.on('receive_text',function(text){
+            console.log('Text: '+text);
+            io.emit('propagate_text',socket.player.id,text);
+        });
     });
 
     socket.on('test',function(){

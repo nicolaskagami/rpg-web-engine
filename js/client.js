@@ -14,12 +14,22 @@ Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
 
+
+Client.sendText = function(text)
+{
+    Client.socket.emit('receive_text',text);
+}
+
 Client.sendClick = function(x,y){
   Client.socket.emit('click',{x:x,y:y});
 };
 
 Client.socket.on('newplayer',function(data){
     Game.addNewPlayer(data.id,data.x,data.y);
+});
+
+Client.socket.on('propagate_text',function(id,text){
+   insertChat("me",id+text) ;
 });
 
 Client.socket.on('allplayers',function(data){
