@@ -1,9 +1,3 @@
-var me = {};
-me.avatar = "https://lh6.googleusercontent.com/-lr2nyjhhjXw/AAAAAAAAAAI/AAAAAAAARmE/MdtfUmC0M4s/photo.jpg?sz=48";
-
-var you = {};
-you.avatar = "https://a11.t26.net/taringa/avatares/9/1/2/F/7/8/Demon_King1/48x48_5C5.jpg";
-
 function formatAMPM(date) 
 {
     var hours = date.getHours();
@@ -16,15 +10,13 @@ function formatAMPM(date)
     return strTime;
 }            
 
-//-- No use time. It is a javaScript effect.
-function insertChat(who, text, time = 0)
+function insertChat(user, text)
 {
     var control = "";
     var date = formatAMPM(new Date());
     
-    if (who == "me")
+    if (user == "me")
     {
-        
         control = '<li style="width:100%">' +
                         '<div class="msj macro">' +
                         //'<div class="avatar"><img class="img-circle" style="width:100%;" src="'+ me.avatar +'" /></div>' +
@@ -33,7 +25,7 @@ function insertChat(who, text, time = 0)
                                 '<p><small>'+date+'</small></p>' +
                             '</div>' +
                         '</div>' +
-                    '</li>';                    
+                  '</li>';                    
     }
     else
     {
@@ -46,14 +38,7 @@ function insertChat(who, text, time = 0)
                         //'<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="'+you.avatar+'" /></div>' +                                
                   '</li>';
     }
-    setTimeout
-    (
-        function()
-        {                        
-            $("ul").append(control);
-
-        }, time
-    );
+    $("ul").append(control);
     
 }
 
@@ -82,20 +67,3 @@ $("#chat").css("height", newHeight);
 
 //-- Clear Chat
 resetChat();
-
-//-- Print Messages
-/*insertChat("me", "Hello Tom...", 0);  
-insertChat("you", "Hi, Pablo", 1500);
-insertChat("me", "What would you like to talk about today?", 3500);
-insertChat("you", "Tell me a joke",7000);
-insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 9500);
-insertChat("you", "LOL", 12000);
-insertChat("me", "Hello Tom...", 13000);  
-insertChat("you", "Hi, Pablo", 15000);
-insertChat("me", "What would you like to talk about today?", 35000);
-insertChat("you", "Tell me a joke",70000);
-insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 950000);
-insertChat("you", "LOL", 1200000);*/
-
-
-//-- NOTE: No use time on insertChat.

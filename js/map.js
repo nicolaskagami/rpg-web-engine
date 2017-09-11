@@ -1,4 +1,4 @@
-var Tile = function()
+function Tile()
 {
     //this.texture
     this.light_level = 0;
@@ -15,7 +15,7 @@ Tile.prototype =
     }
 };
 
-var Map = function (Width,Height)
+function Map(Width,Height)
 {
     this.tiles = [];
     this.height = Height;
@@ -28,11 +28,15 @@ var Map = function (Width,Height)
 
 Map.prototype = 
 {
+    loadTilemap: function(tilemap_name,url)
+    {
+        game.load.tilemap(tilemap_name,url, null, Phaser.Tilemap.TILED_JSON);
+    },
     forbidTile: function(x,y)
     {
         this.tiles[y*this.width+x].forbidden = true;
-    }
-    ,
+    },
+
     testTile: function(x,y)
     {
         if(this.tiles[y*this.width+x].forbidden)
@@ -55,6 +59,4 @@ Map.prototype =
                 this.tiles[i].print();
         }
     }
-
-
 };

@@ -13,51 +13,52 @@ app.get('/',function(req,res){
     res.sendFile(__dirname+'/index.html');
 });
 
-server.lastPlayderID = 0;
+server.lastUserID = 0;
 
 server.listen(process.env.PORT || 8081,function(){
     console.log('Listening on '+server.address().port);
 });
 
-io.on('connection',function(socket){
-
-    socket.on('newplayer',function(){
-        socket.player = {
-            id: server.lastPlayderID++,
+io.on('connection',function(socket)
+{
+    socket.on('request_new_user',function()
+        {
+        socket.user = 
+        {
+            id: server.lastUserID++,
             x: randomInt(100,400),
             y: randomInt(100,400)
         };
-        socket.emit('allplayers',getAllPlayers());
-        socket.broadcast.emit('newplayer',socket.player);
+        socket.emit('list_users',getAllUsers());
+        socket.broadcast.emit('inform_new_user',socket.user);
 
-        socket.on('click',function(data){
+        socket.on('click',function(data)
+        {
             console.log('click to '+data.x+', '+data.y);
-            socket.player.x = data.x;
-            socket.player.y = data.y;
-            io.emit('move',socket.player);
+            socket.user.x = data.x;
+            socket.user.y = data.y;
+            io.emit('move',socket.user);
         });
 
-        socket.on('disconnect',function(){
-            io.emit('remove',socket.player.id);
+        socket.on('disconnect',function()
+        {
+            io.emit('remove_user',socket.user.id);
         });
-        socket.on('receive_text',function(text){
+        socket.on('request_text',function(text)
+        {
             console.log('Text: '+text);
-            io.emit('propagate_text',socket.player.id,text);
+            io.emit('propagate_text',socket.user.id,text);
         });
-    });
-
-    socket.on('test',function(){
-        console.log('test received');
     });
 });
 
-function getAllPlayers(){
-    var players = [];
+function getAllUsers(){
+    var users = [];
     Object.keys(io.sockets.connected).forEach(function(socketID){
-        var player = io.sockets.connected[socketID].player;
-        if(player) players.push(player);
+        var user = io.sockets.connected[socketID].user;
+        if(user) users.push(user);
     });
-    return players;
+    return users;
 }
 
 function randomInt (low, high) {
