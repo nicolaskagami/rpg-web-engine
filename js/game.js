@@ -53,9 +53,8 @@ GameFunction.prototype =
         }
         layer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
         layer.events.onInputUp.add(this.getCoordinates, this);
+        */
         Client.sendNewUser();
-        console.log(map);
-        /**/
     },
 
     getCoordinates: function(layer,pointer)
