@@ -1,20 +1,19 @@
-// Using Express
-//
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
+var vorpal = require('vorpal')(); // Server-side CLI
+vorpal
+    .delimiter('daffy$')
+    .show();
 
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
 app.use('/assets',express.static(__dirname + '/assets'));
 
-app.get('/',function(req,res){
-    res.sendFile(__dirname+'/index.html');
-});
+app.get('/',function(req,res){res.sendFile(__dirname+'/index.html');});
 
 server.lastUserID = 0;
-
 server.listen(process.env.PORT || 8081,function(){
     console.log('Listening on '+server.address().port);
 });
@@ -22,7 +21,7 @@ server.listen(process.env.PORT || 8081,function(){
 io.on('connection',function(socket)
 {
     socket.on('request_new_user',function()
-        {
+    {
         socket.user = 
         {
             id: server.lastUserID++,

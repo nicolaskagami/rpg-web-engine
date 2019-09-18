@@ -27,7 +27,6 @@ Client.sendClick = function(x,y)
 
 Client.socket.on('inform_new_user',function(data)
 {
-    Game.addNewUser(data.id,data.x,data.y);
 });
 
 Client.socket.on('propagate_text',function(id,text)
@@ -37,20 +36,14 @@ Client.socket.on('propagate_text',function(id,text)
 
 Client.socket.on('list_users',function(data)
 {
-    for(var i = 0; i < data.length; i++)
-    {
-        Game.addNewUser(data[i].id,data[i].x,data[i].y);
-    }
 
     //Functions which depend on current_users
     Client.socket.on('move',function(data)
     {
-        Game.moveUser(data.id,data.x,data.y);
     });
 
     Client.socket.on('remove_user',function(id)
     {
-        Game.removeUser(id);
     });
 });
 

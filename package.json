@@ -19,7 +19,8 @@
   ],
   "author": "Nicolas Kagami",
   "dependencies": {
-    "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+    "express": "^4.17.1",
+    "socket.io": "^1.7.3",
+    "vorpal": "^1.12.0"
   }
 }
