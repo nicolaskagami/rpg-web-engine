@@ -2,10 +2,8 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
-var vorpal = require('vorpal')(); // Server-side CLI
-vorpal
-    .delimiter('daffy$')
-    .show();
+var readline = require('readline');
+
 
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
@@ -20,6 +18,11 @@ server.listen(process.env.PORT || 8081,function(){
 
 io.on('connection',function(socket)
 {
+    socket.on('send', function (data) 
+    {
+        io.sockets.emit('message', data);
+        console.log(data);
+    });
     socket.on('request_new_user',function()
     {
         socket.user = 
@@ -38,6 +41,7 @@ io.on('connection',function(socket)
             socket.user.y = data.y;
             io.emit('move',socket.user);
         });
+
 
         socket.on('disconnect',function()
         {
