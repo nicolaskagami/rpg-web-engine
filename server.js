@@ -5,6 +5,7 @@ var io = require('socket.io').listen(server);
 var readline = require('readline');
 
 
+import { Grid } from 'grid';
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
 app.use('/assets',express.static(__dirname + '/assets'));
