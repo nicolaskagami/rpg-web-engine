@@ -1,5 +1,6 @@
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
+let _allEntities = {} ;
 class Entity 
 {
     constructor({object})
@@ -11,8 +12,12 @@ class Entity
                 this[key] = object[key];
 
         } else {
-            this.uuid = uuidv4();
+            this.uuid = "_".concat(uuidv4().replace(/-/g, ''));
         }
+        if(_allEntities[this.uuid]!=null)
+            throw new Error('Preexistent UUID')
+
+        _allEntities[this.uuid]= this;
     }
 
     toJson()
@@ -20,10 +25,23 @@ class Entity
         return JSON.stringify(this);
     }
 
+    static getEntity ({uuid})
+    {
+       return _allEntities[uuid]; 
+    }
+
+    static removeEntity ({uuid})
+    {
+       delete _allEntities[uuid]; 
+    }
+
+    static getEntities ()
+    {
+       return _allEntities; 
+    }
+
     static storeEntities({entities, path})
     {
-        console.log(entities)
-        console.log(path)
         fs.writeFileSync(path, JSON.stringify(entities))
     }
     static loadEntities({path})
@@ -33,7 +51,9 @@ class Entity
         objects = JSON.parse(fs.readFileSync(path, 'utf8'));
         for (var i = 0; i < objects.length; i++) {
             var dynamicConstructor = Object.prototype.constructor(this);
-            entities.push(new dynamicConstructor({object: objects[i]}))
+            try {
+                entities.push(new dynamicConstructor({object: objects[i]}))
+            } catch (error) { console.log(error); }
         }
         return entities;
     }

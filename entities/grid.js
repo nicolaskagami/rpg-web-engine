@@ -23,9 +23,9 @@ class Grid extends Entity
 }
 
 //Example of new Grid Entity
-var a = new Grid({ height: 2, width: 3 });
-a.insertEntity('123',0,2);
-console.log(a)
+//var a = new Grid({ height: 2, width: 3 });
+//a.insertEntity('123',0,2);
+//console.log(a)
 
 
 module.exports = Grid;
