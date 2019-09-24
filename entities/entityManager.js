@@ -16,7 +16,7 @@ class EntityManager {
             this.entities[entity.__uuid] = entity;
         entity.setManager(this);
     }
-    getEntity ({uuid})
+    getEntity (uuid)
     {
        return this.entities[uuid]; 
     }
@@ -38,7 +38,6 @@ class EntityManager {
             return value;
         });
         cache = null; 
-        console.log(ents)
         return ents
     }
     storeEntities({entities, path})
@@ -74,7 +73,8 @@ module.exports = EntityManager;
 
 const Entity = require('./entity');
 const Expression = require('./expression');
-//console.log(loadEntities({path: 'a.json'}))
+const Condition = require('./condition');
+const Effect = require('./effect');
 //Must be kept after exporting EntityManager (to avoid circular dependencies)
 const entities = require('require-all')({
     dirname     :  __dirname, 
@@ -90,10 +90,14 @@ for (const key of Object.keys(entities))
 
 var a = new EntityManager();
 a.loadEntities({path: './a.json'})
-var b = new Entity({});
-a.addEntity(b);
-console.log(b.toJson());
-console.log(a.getEntities());
-var c = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height > 1"})
+var ex = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height > 0"})
+var res = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height +3"})
+var ef = new Effect({target:  '_771919bef77243d1b3c3e4a6556ef46e', property:'height', result: res.__uuid}) 
+var c = new Condition({expression: ex.__uuid, effect: ef.__uuid}) 
+a.addEntity(ex);
 a.addEntity(c);
-console.log(c.evaluate())
+a.addEntity(ef);
+a.addEntity(res);
+console.log(a.getEntities());
+c.execute()
+console.log(a.getEntities());

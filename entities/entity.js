@@ -28,8 +28,16 @@ class Entity
 
     toJson()
     {
-        this.__manager = null;
-        return JSON.stringify(this);
+        var cache = [];
+        var ent = JSON.stringify(this, function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) return;
+                cache.push(value);
+            }
+            return value;
+        });
+        cache = null; 
+        return ent
     }
 
 }

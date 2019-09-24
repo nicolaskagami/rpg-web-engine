@@ -14,6 +14,7 @@ class Expression extends Entity
     }
     evaluate()
     {
+        console.log("Expression.execute")
         var scope = JSON.parse(this.__manager.getEntities());
         console.log(scope)
         try {
