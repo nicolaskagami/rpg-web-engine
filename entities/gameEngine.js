@@ -1,6 +1,5 @@
 const Grid = require('./grid');
 const Entity = require('./entity');
-var entities = Grid.loadEntities({path: './a.json'});
 const Expression = require('./expression');
 const fs = require('fs');
 class GameEngine 

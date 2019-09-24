@@ -1,5 +1,5 @@
 const Entity = require('./entity');
-const Grid = require('./grid');
+const EntityManager = require('./entityManager');
 const math = require('mathjs');
 class Expression extends Entity
 {
@@ -14,15 +14,13 @@ class Expression extends Entity
     }
     evaluate()
     {
-        var scope = JSON.parse(JSON.stringify(Entity.getEntities()));
+        var scope = JSON.parse(this.__manager.getEntities());
+        console.log(scope)
         try {
             return (math.evaluate(this.expression, scope))
         } catch (error) { return this.defaultValue; }
     }
 }
 
-var a = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height > 0"})
-console.log(a.evaluate())
 //Entity.removeEntity({uuid: a.uuid});
-console.log(Entity.getEntities())
 module.exports = Expression;

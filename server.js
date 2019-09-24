@@ -1,70 +1,82 @@
+// Setup basic express server
 var express = require('express');
 var app = express();
-var server = require('http').Server(app);
+var path = require('path');
+var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
-var readline = require('readline');
+var port = process.env.PORT || 3000;
+var GameEngine = require('./entities/gameEngine');
 
 
-import { Grid } from 'grid';
-app.use('/css',express.static(__dirname + '/css'));
-app.use('/js',express.static(__dirname + '/js'));
-app.use('/assets',express.static(__dirname + '/assets'));
 
-app.get('/',function(req,res){res.sendFile(__dirname+'/index.html');});
-
-server.lastUserID = 0;
-server.listen(process.env.PORT || 8081,function(){
-    console.log('Listening on '+server.address().port);
+server.listen(port, () => {
+  console.log('Server listening at port %d', port);
 });
 
-io.on('connection',function(socket)
-{
-    socket.on('send', function (data) 
-    {
-        io.sockets.emit('message', data);
-        console.log(data);
+// Routing
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Chatroom
+
+var numUsers = 0;
+
+io.on('connection', (socket) => {
+  var addedUser = false;
+
+
+  // when the client emits 'new message', this listens and executes
+  socket.on('new message', (data) => {
+      console.log(data);
+    // we tell the client to execute 'new message'
+    socket.broadcast.emit('new message', {
+      username: socket.username,
+      message: data
     });
-    socket.on('request_new_user',function()
-    {
-        socket.user = 
-        {
-            id: server.lastUserID++,
-            x: randomInt(100,400),
-            y: randomInt(100,400)
-        };
-        socket.emit('list_users',getAllUsers());
-        socket.broadcast.emit('inform_new_user',socket.user);
+  });
 
-        socket.on('click',function(data)
-        {
-            console.log('click to '+data.x+', '+data.y);
-            socket.user.x = data.x;
-            socket.user.y = data.y;
-            io.emit('move',socket.user);
-        });
+  // when the client emits 'add user', this listens and executes
+  socket.on('add user', (username) => {
+      console.log("Add User");
+    if (addedUser) return;
 
-
-        socket.on('disconnect',function()
-        {
-            io.emit('remove_user',socket.user.id);
-        });
-        socket.on('request_text',function(text)
-        {
-            console.log('Text: '+text);
-            io.emit('propagate_text',socket.user.id,text);
-        });
+    // we store the username in the socket session for this client
+    socket.username = username;
+    ++numUsers;
+    addedUser = true;
+    socket.emit('login', {
+      numUsers: numUsers
     });
+    // echo globally (all clients) that a person has connected
+    socket.broadcast.emit('user joined', {
+      username: socket.username,
+      numUsers: numUsers
+    });
+  });
+
+  // when the client emits 'typing', we broadcast it to others
+  socket.on('typing', () => {
+    socket.broadcast.emit('typing', {
+      username: socket.username
+    });
+  });
+
+  // when the client emits 'stop typing', we broadcast it to others
+  socket.on('stop typing', () => {
+    socket.broadcast.emit('stop typing', {
+      username: socket.username
+    });
+  });
+
+  // when the user disconnects.. perform this
+  socket.on('disconnect', () => {
+    if (addedUser) {
+      --numUsers;
+
+      // echo globally that this client has left
+      socket.broadcast.emit('user left', {
+        username: socket.username,
+        numUsers: numUsers
+      });
+    }
+  });
 });
-
-function getAllUsers(){
-    var users = [];
-    Object.keys(io.sockets.connected).forEach(function(socketID){
-        var user = io.sockets.connected[socketID].user;
-        if(user) users.push(user);
-    });
-    return users;
-}
-
-function randomInt (low, high) {
-    return Math.floor(Math.random() * (high - low) + low);
-}
