@@ -13,12 +13,10 @@ class Effect extends Entity
     }
     execute()
     {
-        console.log("Effect.execute")
         var expr = this.__manager.getEntity(this.result)
         var target = this.__manager.getEntity(this.target)
-        console.log(target, this.result,expr)
         if(target && expr)
-        target[this.property] = expr.evaluate();
+            target[this.property] = expr.evaluate();
         
     }
 }

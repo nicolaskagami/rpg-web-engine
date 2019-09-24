@@ -1,23 +1,25 @@
 const Entity = require('./entity');
 class Condition extends Entity
 {
-    constructor({object, expression, effect})
+    constructor({object, expression, effects})
     {
         super({object: object});
         if(object == null)
         {
             this.expression = expression;
-            this.effect = effect;
+            this.effects = effects;
         }
     }
 
     execute()
     {
-        console.log("Condition.execute")
         var expr = this.__manager.getEntity(this.expression)
-        var eff = this.__manager.getEntity(this.effect)
-        if(eff && expr)
-            eff.execute()
+        for(var effect in this.effects)
+        {
+            var eff = this.__manager.getEntity(this.effects[effect])
+            if(eff && expr)
+                eff.execute()
+        }
 
     }
 }

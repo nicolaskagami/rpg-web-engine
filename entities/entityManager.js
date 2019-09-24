@@ -28,6 +28,10 @@ class EntityManager {
 
     getEntities()
     {
+        return this.entities;
+    }
+    getJSONEntities()
+    {
         //Stringify ignoring circular references
         var cache = [];
         var ents = JSON.stringify(this.entities, function(key, value) {
@@ -93,10 +97,12 @@ a.loadEntities({path: './a.json'})
 var ex = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height > 0"})
 var res = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height +3"})
 var ef = new Effect({target:  '_771919bef77243d1b3c3e4a6556ef46e', property:'height', result: res.__uuid}) 
-var c = new Condition({expression: ex.__uuid, effect: ef.__uuid}) 
+var ef2 = new Effect({target:  '_771919bef77243d1b3c3e4a6556ef46e', property:'height', result: res.__uuid}) 
+var c = new Condition({expression: ex.__uuid, effects: [ef.__uuid, ef2.__uuid]}) 
 a.addEntity(ex);
 a.addEntity(c);
 a.addEntity(ef);
+a.addEntity(ef2);
 a.addEntity(res);
 console.log(a.getEntities());
 c.execute()

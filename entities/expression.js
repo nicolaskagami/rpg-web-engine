@@ -14,14 +14,10 @@ class Expression extends Entity
     }
     evaluate()
     {
-        console.log("Expression.execute")
-        var scope = JSON.parse(this.__manager.getEntities());
-        console.log(scope)
+        var scope = JSON.parse(this.__manager.getJSONEntities());
         try {
             return (math.evaluate(this.expression, scope))
         } catch (error) { return this.defaultValue; }
     }
 }
-
-//Entity.removeEntity({uuid: a.uuid});
 module.exports = Expression;
