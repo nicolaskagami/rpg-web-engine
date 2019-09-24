@@ -25,6 +25,10 @@ class Entity
     {
         this.__manager = manager;
     }
+    end()
+    {
+        this.__manager.removeEntity(this.__uuid);
+    }
 
     toJson()
     {
