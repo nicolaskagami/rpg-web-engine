@@ -46,12 +46,27 @@ class EntityManager {
     }
     storeEntities({entities, path})
     {
-        fs.writeFileSync(path, JSON.stringify(entities))
+        var entityArray = []
+        for(var i in this.entities)
+            entityArray.push(this.entities[i])
+
+        var cache = [];
+        var ents = JSON.stringify(entityArray, function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) return;
+                cache.push(value);
+            }
+            return value;
+        });
+        cache = null; 
+
+        fs.writeFileSync(path, ents)
     }
     loadEntities({path})
     {
         var objects = [];
         objects = JSON.parse(fs.readFileSync(path, 'utf8'));
+
         if(isArray(objects))
             for (var i = 0; i < objects.length; i++) 
                 this.addEntity(this.revive(objects[i]));
@@ -79,6 +94,7 @@ const Entity = require('./entity');
 const Expression = require('./expression');
 const Condition = require('./condition');
 const Effect = require('./effect');
+const Filter= require('./filter');
 //Must be kept after exporting EntityManager (to avoid circular dependencies)
 const entities = require('require-all')({
     dirname     :  __dirname, 
@@ -93,17 +109,5 @@ for (const key of Object.keys(entities))
     entityTypes[(entities[key].name)] = entities[key]
 
 var a = new EntityManager();
-a.loadEntities({path: './a.json'})
-var ex = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height > 0"})
-var res = new Expression({expression:"_771919bef77243d1b3c3e4a6556ef46e.height +3"})
-var ef = new Effect({target:  '_771919bef77243d1b3c3e4a6556ef46e', property:'height', result: res.__uuid}) 
-var ef2 = new Effect({target:  '_771919bef77243d1b3c3e4a6556ef46e', property:'height', result: res.__uuid}) 
-var c = new Condition({expression: ex.__uuid, effects: [ef.__uuid, ef2.__uuid], exitCondition: ex.__uuid}) 
-a.addEntity(ex);
-a.addEntity(c);
-a.addEntity(ef);
-a.addEntity(ef2);
-a.addEntity(res);
-console.log(a.getEntities());
-c.execute()
+a.loadEntities({path: './b.json'})
 console.log(a.getEntities());

@@ -1,4 +1,9 @@
 const Entity = require('./entity');
+//Grid should model:
+// Entity Position
+// Visibility?
+// Reachability?
+// Tile properties?
 class Grid extends Entity
 {
     constructor({object, height, width})
@@ -21,11 +26,6 @@ class Grid extends Entity
         
     }
 }
-
-//Example of new Grid Entity
-//var a = new Grid({ height: 2, width: 3 });
-//a.insertEntity('123',0,2);
-//console.log(a)
 
 
 module.exports = Grid;
