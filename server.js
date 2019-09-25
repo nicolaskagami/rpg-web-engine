@@ -5,8 +5,17 @@ var path = require('path');
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 var port = process.env.PORT || 3000;
-var GameEngine = require('./entities/gameEngine');
 
+const Session = require('./js/session')
+//User commands:
+//  List Sessions
+//  Create Session
+//  Enter Session
+//  Session.loadSave (admin only?)
+//  Session.broadcast
+//  Session.getVisibleEntities
+//  Session.getCommandedEntities
+//  Session.entity.order
 
 
 server.listen(port, () => {
@@ -16,63 +25,55 @@ server.listen(port, () => {
 // Routing
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Chatroom
-
 var numUsers = 0;
-
 io.on('connection', (socket) => {
-  var addedUser = false;
+  var loggedIn = false;
 
-
-  // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {
-      console.log(data);
-    // we tell the client to execute 'new message'
+      console.log("nm")
     socket.broadcast.emit('new message', {
       username: socket.username,
       message: data
     });
   });
+  socket.on('command', ({cmd, args}) => {
+      console.log("cmd")
+    socket.broadcast.emit('command', {
+      username: socket.username,
+      message: "CMD"+cmd+args+args
+    });
+  });
 
-  // when the client emits 'add user', this listens and executes
+
   socket.on('add user', (username) => {
-      console.log("Add User");
-    if (addedUser) return;
-
-    // we store the username in the socket session for this client
+    if (loggedIn) return;
     socket.username = username;
     ++numUsers;
-    addedUser = true;
-    socket.emit('login', {
-      numUsers: numUsers
-    });
-    // echo globally (all clients) that a person has connected
+    loggedIn = true;
+    socket.emit('login', {numUsers: numUsers});
+
     socket.broadcast.emit('user joined', {
       username: socket.username,
       numUsers: numUsers
     });
   });
 
-  // when the client emits 'typing', we broadcast it to others
   socket.on('typing', () => {
     socket.broadcast.emit('typing', {
       username: socket.username
     });
   });
 
-  // when the client emits 'stop typing', we broadcast it to others
   socket.on('stop typing', () => {
     socket.broadcast.emit('stop typing', {
       username: socket.username
     });
   });
 
-  // when the user disconnects.. perform this
   socket.on('disconnect', () => {
-    if (addedUser) {
+    if (loggedIn) 
+    {
       --numUsers;
-
-      // echo globally that this client has left
       socket.broadcast.emit('user left', {
         username: socket.username,
         numUsers: numUsers

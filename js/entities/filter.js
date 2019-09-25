@@ -2,7 +2,7 @@ const Entity = require('./entity');
 const math = require('mathjs');
 class Filter extends Entity
 {
-    constructor({object, input, filter})
+    constructor({object, input, filter, filterInput})
     {
         //Filter: property expression
         super({object: object});
@@ -10,26 +10,25 @@ class Filter extends Entity
         {
             if(!filter)
                 throw new Error("Filter needs a filter expression")
-            this.__filterInput = false;
             this.output = [];
             this.filter = filter
             if(input)
-            {
-                if(input.__type && input.__type == 'Filter')
-                    this.__filterInput = true;
                 this.input = input 
-            }
+            if(filterInput)
+                this.filterInput = filterInput
+            else
+                this.filterInput = false;
         }
     }
 
     execute()
     {
-        var entities = JSON.parse(this.__manager.getJSONEntities());
+        var entities = JSON.parse(this.__manager.getJSONEntitiesMap());
         var output = [];
         var scope;
         var prefilter;
-        if (this.__filterInput) {
-            prefilter = this.input.execute();
+        if (this.filterInput && entities[this.input]) {
+            prefilter = this.__manager.entities[this.input].execute();
         } else {
             prefilter = this.input;
         }

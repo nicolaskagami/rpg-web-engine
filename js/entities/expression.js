@@ -14,7 +14,7 @@ class Expression extends Entity
     }
     evaluate()
     {
-        var scope = JSON.parse(this.__manager.getJSONEntities());
+        var scope = JSON.parse(this.__manager.getJSONEntitiesMap());
         try {
             return (math.evaluate(this.expression, scope))
         } catch (error) { return this.defaultValue; }

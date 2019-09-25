@@ -26,7 +26,4 @@ class Effect extends Entity
         super.end()
     }
 }
-
-
-
 module.exports = Effect;

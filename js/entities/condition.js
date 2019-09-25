@@ -19,6 +19,7 @@ class Condition extends Entity
         if(expr && expr.evaluate())
             for(var effect in this.effects)
             {
+                console.log("Effect", effect)
                 var eff = this.__manager.getEntity(this.effects[effect])
                 if(eff)
                     eff.execute()

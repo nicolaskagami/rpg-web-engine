@@ -1,4 +1,3 @@
-var fs = require('fs')
 function isArray(what) {
     return Object.prototype.toString.call(what) === '[object Array]';
 }
@@ -30,12 +29,13 @@ class EntityManager {
     {
         return this.entities;
     }
-    getJSONEntities()
+    getJSONEntitiesMap()
     {
         //Stringify ignoring circular references
         var cache = [];
         var ents = JSON.stringify(this.entities, function(key, value) {
             if (typeof value === 'object' && value !== null) {
+                if (Object.getPrototypeOf(value).constructor.name == "EntityManager") return;
                 if (cache.indexOf(value) !== -1) return;
                 cache.push(value);
             }
@@ -44,35 +44,35 @@ class EntityManager {
         cache = null; 
         return ents
     }
-    storeEntities({entities, path})
+    
+    getJSONEntitiesArray(uuidList)
     {
         var entityArray = []
         for(var i in this.entities)
-            entityArray.push(this.entities[i])
+        {
+            if(!uuidList || uuidList.includes(i))
+                entityArray.push(this.entities[i])
+        }
 
         var cache = [];
         var ents = JSON.stringify(entityArray, function(key, value) {
             if (typeof value === 'object' && value !== null) {
+                if (Object.getPrototypeOf(value).constructor.name == "EntityManager") return;
                 if (cache.indexOf(value) !== -1) return;
                 cache.push(value);
             }
             return value;
-        });
+        },2);
         cache = null; 
-
-        fs.writeFileSync(path, ents)
+        return ents
     }
-    loadEntities({path})
+    loadEntities(objects)
     {
-        var objects = [];
-        objects = JSON.parse(fs.readFileSync(path, 'utf8'));
-
         if(isArray(objects))
             for (var i = 0; i < objects.length; i++) 
                 this.addEntity(this.revive(objects[i]));
         else
             this.addEntity(this.revive(objects));
-            
     }
 
     revive(object)
@@ -89,12 +89,6 @@ class EntityManager {
 
 }
 module.exports = EntityManager;
-
-const Entity = require('./entity');
-const Expression = require('./expression');
-const Condition = require('./condition');
-const Effect = require('./effect');
-const Filter= require('./filter');
 //Must be kept after exporting EntityManager (to avoid circular dependencies)
 const entities = require('require-all')({
     dirname     :  __dirname, 
@@ -108,6 +102,3 @@ var entityTypes = []
 for (const key of Object.keys(entities)) 
     entityTypes[(entities[key].name)] = entities[key]
 
-var a = new EntityManager();
-a.loadEntities({path: './b.json'})
-console.log(a.getEntities());
