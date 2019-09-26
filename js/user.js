@@ -1,5 +1,3 @@
-
-function isArray(what) {return Object.prototype.toString.call(what) === '[object Array]';}
 class User 
 {
     constructor({object, username})
@@ -8,9 +6,8 @@ class User
         {
             //Loading from JSON. Every property is loaded.
             for (const key of Object.keys(object)) 
-            {
                 this[key] = object[key];
-            }
+
         } else {
             this.username = username;
         }

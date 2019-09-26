@@ -22,62 +22,47 @@ server.listen(port, () => {
   console.log('Server listening at port %d', port);
 });
 
+sessions = [];
+users = [];
+
 // Routing
 app.use(express.static(path.join(__dirname, 'public')));
 
 var numUsers = 0;
 io.on('connection', (socket) => {
-  var loggedIn = false;
+    
+    socket.username = '';
+    socket.session = '';
 
-  socket.on('new message', (data) => {
-      console.log("nm")
-    socket.broadcast.emit('new message', {
-      username: socket.username,
-      message: data
+    socket.on('message', (data) => {
+        socket.broadcast.emit('message', {
+            username: socket.username,
+            message: data
+        });
     });
-  });
-  socket.on('command', ({cmd, args}) => {
-      console.log("cmd")
-    socket.broadcast.emit('command', {
-      username: socket.username,
-      message: "CMD"+cmd+args+args
+    socket.on('command', ({cmd, args}) => {
+        socket.broadcast.emit('command', {
+            username: socket.username,
+            message: "CMD"+cmd+args+args
+        });
     });
-  });
 
-
-  socket.on('add user', (username) => {
-    if (loggedIn) return;
-    socket.username = username;
-    ++numUsers;
-    loggedIn = true;
-    socket.emit('login', {numUsers: numUsers});
-
-    socket.broadcast.emit('user joined', {
-      username: socket.username,
-      numUsers: numUsers
+    socket.on('login', ({username,password}) => {
+        if (socket.username) 
+            return;
+        //Authenticate 
+        socket.username = username;
+        socket.emit('login', {username: username});
+        users.push(username)
+        socket.broadcast.emit('user list', {users: users});
+        socket.emit('user list', {users: users});
     });
-  });
 
-  socket.on('typing', () => {
-    socket.broadcast.emit('typing', {
-      username: socket.username
+    socket.on('disconnect', () => {
+        var index = users.indexOf(socket.username)
+        if (index == -1)
+            return
+        users.splice(index,1)
+        socket.broadcast.emit('user list', {users: users});
     });
-  });
-
-  socket.on('stop typing', () => {
-    socket.broadcast.emit('stop typing', {
-      username: socket.username
-    });
-  });
-
-  socket.on('disconnect', () => {
-    if (loggedIn) 
-    {
-      --numUsers;
-      socket.broadcast.emit('user left', {
-        username: socket.username,
-        numUsers: numUsers
-      });
-    }
-  });
 });
