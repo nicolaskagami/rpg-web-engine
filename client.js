@@ -63,7 +63,7 @@ function requestPassword(args)
 
 rl.on('line', function(line) {
     if (line[0] == "/" && line.length > 1) {
-        var cmd = line.match(/[a-z]+\b/)[0];
+        var cmd = line.match(/[a-z-]+\b/)[0];
         var arg = line.substr(cmd.length+2, line.length);
         if(cmd == "login")
         {
@@ -113,6 +113,8 @@ socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+Reset+'Lost connecti
 socket.on("message", (data) => { consoleOut(data.username+": "+data.message)});
 socket.on("command", (data) => { consoleOut(data.username+": "+data.message)});
 socket.on("command list", (data) => { commands = data });
+socket.on("session list", (data) => { consoleOut(data) });
+socket.on("session user list", (data) => { consoleOut(data) });
 socket.on("user list", (data) => { consoleOut(data.users)});
 socket.on("login", (data) => { login = data.username; resetPrompt()});
 
