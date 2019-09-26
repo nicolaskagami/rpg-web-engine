@@ -28,24 +28,24 @@ users = [];
 // Routing
 app.use(express.static(path.join(__dirname, 'public')));
 
+function message({socket,data})
+{
+    socket.broadcast.emit('message', {username: socket.username,message: data});
+}
+
+function handleCommand({socket,cmd,args})
+{
+    console.log("Command: "+cmd)
+    console.log("Args: "+args)
+}
 var numUsers = 0;
 io.on('connection', (socket) => {
     
     socket.username = '';
     socket.session = '';
 
-    socket.on('message', (data) => {
-        socket.broadcast.emit('message', {
-            username: socket.username,
-            message: data
-        });
-    });
-    socket.on('command', ({cmd, args}) => {
-        socket.broadcast.emit('command', {
-            username: socket.username,
-            message: "CMD"+cmd+args+args
-        });
-    });
+    socket.on('message', (data) => { message({socket:socket,data:data}) });
+    socket.on('command', ({cmd, args}) => { handleCommand({socket:socket,cmd:cmd,args:args}) });
 
     socket.on('login', ({username,password}) => {
         if (socket.username) 
@@ -56,6 +56,7 @@ io.on('connection', (socket) => {
         users.push(username)
         socket.broadcast.emit('user list', {users: users});
         socket.emit('user list', {users: users});
+        socket.emit('command list', "/login /test");
     });
 
     socket.on('disconnect', () => {
