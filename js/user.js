@@ -1,3 +1,4 @@
+var users = {}
 class User 
 {
     constructor({object, username})
@@ -10,7 +11,25 @@ class User
 
         } else {
             this.username = username;
+            this.state = 'login'
         }
+        users[username] = this;
+    }
+    static getUser(username)
+    {
+        return users[username];
+    }
+    static deleteUser(username)
+    {
+        if(users[username])
+            delete users[username];
+    }
+    static getUsers()
+    {
+        var userList = [];
+        for(var i in users)
+            userList.push(i);
+        return userList;
     }
     //Files owned?
     //Dynamic available Commands?

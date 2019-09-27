@@ -35,9 +35,9 @@ function resetPrompt()
 {
     var promptLine = '';
     if(login)
-        promptLine+=login+'@'+ip
+        promptLine+=FgBlue+login+Reset+'@'+FgGreen+ip+Reset
     if(session)
-        promptLine+=session;
+        promptLine+=':'+FgYellow+session;
     rl.setPrompt(promptLine+' > ');
 }
 
@@ -111,6 +111,7 @@ serverHandle = FgGreen+"Server"
 socket.on('connect', ()=> { consoleOut(serverHandle+': '+Reset+'Connected to '+ip+':'+port);});
 socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+Reset+'Lost connection to '+ip+':'+port);});
 socket.on("message", (data) => { consoleOut(data.username+": "+data.message)});
+socket.on("private message", ({from, to,message}) => { consoleOut(from+to+':'+message)})
 socket.on("command", (data) => { consoleOut(data.username+": "+data.message)});
 socket.on("command list", (data) => { commands = data });
 socket.on("session list", (data) => { consoleOut(data) });
