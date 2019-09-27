@@ -101,13 +101,13 @@ class Session
 }
 module.exports = Session;
 
-var session = new Session();
-session.newUser('Bob');
-session.insertVisibleEntities({username: 'Bob',entities:['_771919bef77243d1b3c3e4a6556ef46e','_e71919bef77243d1b3c3e4a6556ef46e']})
-session.loadEntities('./assets/b.json')
-console.log(session.getVisibleEntities('Bob'))
+//var session = new Session();
+//session.newUser('Bob');
+//session.insertVisibleEntities({username: 'Bob',entities:['_771919bef77243d1b3c3e4a6556ef46e','_e71919bef77243d1b3c3e4a6556ef46e']})
+//session.loadEntities('./assets/b.json')
+//console.log(session.getVisibleEntities('Bob'))
 //session.entityManager.entities['_5a48a4a64fd24072b154b2246c91a341'].execute();
 //console.log(session.entityManager.entities['_175fb71dd3064e6dabc2822e355f8fc7'].execute());
-session.storeEntities('./assets/c.json')
+//session.storeEntities('./assets/c.json')
 //console.log(session.getVisibleEntities('Bob'))
 //console.log(a.getEntities());

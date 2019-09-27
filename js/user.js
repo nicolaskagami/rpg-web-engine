@@ -1,20 +1,34 @@
 var users = {}
 class User 
 {
-    constructor({object, username})
+    constructor({object, username, socketId})
     {
+        if(!username || ! socketId)
+            throw new Error("Invalid new User")
         if (object != null)
         {
-            //Loading from JSON. Every property is loaded.
             for (const key of Object.keys(object)) 
                 this[key] = object[key];
-
         } else {
             this.username = username;
-            this.state = 'login'
+            this.states = [];
+            this.commands = [];
+            this.socketId = socketId;
         }
         users[username] = this;
     }
+    addState(state)
+    {
+        if(!this.states.includes(state))
+            this.states.push(state)
+    }
+    rmState(state)
+    {
+        var index = this.states.indexOf(state)
+        if (index > -1) 
+            this.states.splice(index, 1);
+    }
+
     static getUser(username)
     {
         return users[username];

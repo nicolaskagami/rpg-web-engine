@@ -1,4 +1,3 @@
-//client.js
 const io = require('socket.io-client');
 var processArgs = process.argv.slice(2);
 var ip = (processArgs.length > 0) ? processArgs[0] : 'localhost'
@@ -7,14 +6,24 @@ const socket = io.connect('http://'+ip+':'+port, {reconnect: true});
 const readline = require('readline');
 
 
-var commands = '/login';
+var commands = {};
+var argsList = {};
+argsList['command'] = []
 var autoComplete = function completer(line) 
 {
-    const completions = commands.split(' ');
+    var completions = [];
     const lineWords = line.split(' ');
     const lastWord = lineWords[lineWords.length-1];
+    const firstWord = lineWords[0];
+    if(lineWords.length == 1)
+    {
+        completions = argsList['command'];
+    } else if (commands[firstWord] && commands[firstWord][lineWords.length-2]) {
+        if(argsList[commands[firstWord][lineWords.length-2]])
+            completions = argsList[commands[firstWord][lineWords.length-2]]
+    }
     const hits = completions.filter((c) => c.startsWith(lastWord));
-    return [hits.length ? hits : completions, lastWord];
+    return [hits, lastWord];
 }
 
 function consoleOut(msg) 
@@ -37,17 +46,23 @@ function resetPrompt()
     if(login)
         promptLine+=FgBlue+login+Reset+'@'+FgGreen+ip+Reset
     if(session)
-        promptLine+=':'+FgYellow+session;
+        promptLine+=':'+FgYellow+session+Reset;
     rl.setPrompt(promptLine+' > ');
+}
+function getCommands(cmds)
+{
+    argsList['command'] = []
+    for(var i in cmds)
+        argsList['command'].push(i);
 }
 
 function requestPassword(args)
 {
-    var username = args.split(' ').splice(-1);
+    var username = args.split(' ')[0]
     rl.stdoutMuted = true;
     rl.query = "Password : ";
     rl.question(rl.query, function(password) {
-        socket.emit('login',{username:username,password:password});
+        socket.emit('command',{cmd: 'login', args: username+' '+password});
         rl.history = rl.history.slice(1);
         rl.stdoutMuted = false;
         rl.prompt()
@@ -66,9 +81,7 @@ rl.on('line', function(line) {
         var cmd = line.match(/[a-z-]+\b/)[0];
         var arg = line.substr(cmd.length+2, line.length);
         if(cmd == "login")
-        {
             requestPassword(arg)
-        }
         else
             socket.emit('command',{cmd: cmd, args: arg});
         rl.prompt();
@@ -113,10 +126,13 @@ socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+Reset+'Lost connecti
 socket.on("message", (data) => { consoleOut(data.username+": "+data.message)});
 socket.on("private message", ({from, to,message}) => { consoleOut(from+to+':'+message)})
 socket.on("command", (data) => { consoleOut(data.username+": "+data.message)});
-socket.on("command list", (data) => { commands = data });
-socket.on("session list", (data) => { consoleOut(data) });
+socket.on("command list", (data) => { getCommands(data); commands = data });
+//socket.on("suggested args list", (data) => { argslist = data });
+socket.on("session list", (data) => { argsList['session'] = data; consoleOut(data) });
 socket.on("session user list", (data) => { consoleOut(data) });
-socket.on("user list", (data) => { consoleOut(data.users)});
+socket.on("enter session", (data) => { session = data; resetPrompt(); });
+socket.on("leave session", (data) => { session = ''; resetPrompt();});
+socket.on("user list", (data) => { argsList['user'] = data.users; consoleOut(data.users)});
 socket.on("login", (data) => { login = data.username; resetPrompt()});
 
 rl.setPrompt("> ");
