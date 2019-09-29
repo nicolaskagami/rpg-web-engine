@@ -74,13 +74,19 @@ class EntityManager {
         else
             this.addEntity(this.revive(objects));
     }
-
+    getEntityTypes()
+    {
+        var ents = {}
+        for (var i in entityTypes)
+            ents[i] = entityTypes[i].args;
+        return ents;
+    }
     revive(object)
     {
         var entities = [];
         if(object.hasOwnProperty('__type'))
         {
-            var dynamicConstructor = entityTypes[object.__type] 
+            var dynamicConstructor = entityTypes[object.__type].constructor 
             try {
                 return new dynamicConstructor({object: object})
             } catch (error) { console.log(error); }
@@ -90,6 +96,7 @@ class EntityManager {
 }
 module.exports = EntityManager;
 //Must be kept after exporting EntityManager (to avoid circular dependencies)
+const Entity = require('./entity')
 const entities = require('require-all')({
     dirname     :  __dirname, 
     filter      :  /(.)\.js$/,
@@ -100,5 +107,24 @@ const entities = require('require-all')({
 
 var entityTypes = []
 for (const key of Object.keys(entities)) 
-    entityTypes[(entities[key].name)] = entities[key]
+{
+    if(entities[key].prototype instanceof Entity || entities[key].prototype == Entity.prototype)
+    {
+        entityTypes[(entities[key].name)] = 
+            {
+                constructor: entities[key],
+                args: getArgs(entities[key])
+            }
+    }
+}
+function getArgs(func)
+{
+    var functionString = func.toString().replace(/(\/\*[^*]*\*\/)|(\/\/[^*]*)/g, '').replace(/\s+/g, ' ');
+    var pat = /constructor[^(]*\(([^'"()]|("([^"]|(\')|(\"))*")|('([^']|(\')|(\"))*')|(\([^(]*\)))*\)/
+    var constructorParamMatch = pat.exec(functionString) 
+    if(!constructorParamMatch) return '';
+    var paramMatch = /\((.*)\)/.exec(constructorParamMatch[0])[1]
+    if(!paramMatch) return '';
+    return paramMatch.replace(/\s+/g,'').replace(/,/g, ', ') 
 
+}

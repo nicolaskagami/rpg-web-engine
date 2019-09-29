@@ -21,6 +21,26 @@ class Session
         }
         sessions[name] = this;
     }
+    getEntityTypes()
+    {
+        var ents = this.entityManager.getEntityTypes();
+        var entsArray = {};
+        for (var i in ents)
+        {
+            var args = /\{(.*)\}/.exec(ents[i])[1];
+            args = args.split(',')
+            for(var j in args)
+            {
+                args[j] = '--'+/[a-zA-Z_][0-9a-zA-Z_]*/.exec(args[j])[0]
+            } 
+            entsArray[i] = args
+        }
+        return entsArray;
+    }
+    newEntity(entityType, parameters)
+    {
+        console.log(entityType, parameters)
+    }
     newUser(username)
     {
         if(!this.users[username])
@@ -110,4 +130,4 @@ module.exports = Session;
 //console.log(session.entityManager.entities['_175fb71dd3064e6dabc2822e355f8fc7'].execute());
 //session.storeEntities('./assets/c.json')
 //console.log(session.getVisibleEntities('Bob'))
-//console.log(a.getEntities());
+//console.log(session.entityManager.getEntities());

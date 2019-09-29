@@ -4,7 +4,7 @@ const EntityManager = require('./entityManager');
 let _allEntities = {} ;
 class Entity 
 {
-    constructor({object})
+    constructor({object}) //Constructors should receive objects
     {
         if (object != null)
         {

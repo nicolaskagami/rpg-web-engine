@@ -6,7 +6,7 @@ const Entity = require('./entity');
 // Tile properties?
 class Grid extends Entity
 {
-    constructor({object, height, width})
+    constructor( { object, height=2, width})
     {
         super({object: object});
         if(object == null)
@@ -26,6 +26,4 @@ class Grid extends Entity
         
     }
 }
-
-
 module.exports = Grid;
