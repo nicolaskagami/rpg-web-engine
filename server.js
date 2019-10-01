@@ -1,66 +1,40 @@
-// Using Express
-//
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
+const express = require('express');
+const app = express();
+const path = require('path');
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+const port = process.env.PORT || 3000;
+const Command = require('./js/commands')
+const User = require('./js/user')
 
-app.use('/css',express.static(__dirname + '/css'));
-app.use('/js',express.static(__dirname + '/js'));
-app.use('/assets',express.static(__dirname + '/assets'));
+server.listen(port, () => {console.log("Server: UP")});
 
-app.get('/',function(req,res){
-    res.sendFile(__dirname+'/index.html');
-});
+app.use(express.static(path.join(__dirname, 'public')));
 
-server.lastUserID = 0;
-
-server.listen(process.env.PORT || 8081,function(){
-    console.log('Listening on '+server.address().port);
-});
-
-io.on('connection',function(socket)
+function message({socket,data})
 {
-    socket.on('request_new_user',function()
-        {
-        socket.user = 
-        {
-            id: server.lastUserID++,
-            x: randomInt(100,400),
-            y: randomInt(100,400)
-        };
-        socket.emit('list_users',getAllUsers());
-        socket.broadcast.emit('inform_new_user',socket.user);
+    socket.broadcast.emit('message', {username: socket.user.username, message: data});
+}
 
-        socket.on('click',function(data)
-        {
-            console.log('click to '+data.x+', '+data.y);
-            socket.user.x = data.x;
-            socket.user.y = data.y;
-            io.emit('move',socket.user);
-        });
+function removeUser(username)
+{
+    User.deleteUser(username);
+    io.sockets.emit('user list', {users: User.getUsers()});
+}
+function addGuest({socket})
+{
+    socket.user = new User({username: 'guest'+guestId++, socketId: socket.id});
+    socket.user.addState('guest');
+    Command.updateCommands(socket);
+    io.sockets.emit('user list', {users: User.getUsers()});
+}
 
-        socket.on('disconnect',function()
-        {
-            io.emit('remove_user',socket.user.id);
-        });
-        socket.on('request_text',function(text)
-        {
-            console.log('Text: '+text);
-            io.emit('propagate_text',socket.user.id,text);
-        });
-    });
+var guestId = 0;
+io.on('connection', (socket) => 
+{
+    addGuest({socket:socket});
+
+    socket.on('message', (data) => { message({ socket:socket, data:data}) });
+    socket.on('command', ({cmd, args}) => { Command.execute({io:io, socket:socket, cmd: cmd, args: args}) })
+    socket.on('disconnect', () => {removeUser(socket.user.username)});
 });
-
-function getAllUsers(){
-    var users = [];
-    Object.keys(io.sockets.connected).forEach(function(socketID){
-        var user = io.sockets.connected[socketID].user;
-        if(user) users.push(user);
-    });
-    return users;
-}
-
-function randomInt (low, high) {
-    return Math.floor(Math.random() * (high - low) + low);
-}
