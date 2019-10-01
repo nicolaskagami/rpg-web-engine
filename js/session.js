@@ -128,13 +128,16 @@ session.loadEntities('./assets/b.json')
 const Expression = require('./entities/expression')
 var exp = new Expression({expression: '["_771919bef77243d1b3c3e4a6556ef46e","_e71919bef77243d1b3c3e4a6556ef46e"]'})
 session.entityManager.addEntity(exp);
-console.log(exp.evaluate())
+//console.log("A: "+exp.evaluate())
 var exp2 = new Expression({expression: '["_771919bef77243d1b3c3e4a6556ef46e","_f71919bef77243d1b3c3e4a6556ef46e"]'})
 session.entityManager.addEntity(exp2);
-console.log(exp2.evaluate())
-var exp3 = new Expression({expression: 'join('+exp.__uuid+'.output,'+exp2.__uuid+'.output)'})
+//console.log("B: "+exp2.evaluate())
+var exp3 = new Expression({expression: 'AND('+exp.__uuid+'.output,'+exp2.__uuid+'.output)'})
 session.entityManager.addEntity(exp3);
-console.log(exp3.evaluate())
+console.log("A AND B: "+exp3.evaluate())
+var exp4 = new Expression({expression: 'OR('+exp.__uuid+'.output,'+exp2.__uuid+'.output)'})
+session.entityManager.addEntity(exp4);
+console.log("A OR B: "+exp4.evaluate())
 //console.log(session.getVisibleEntities('Bob'))
 //session.entityManager.entities['_5a48a4a64fd24072b154b2246c91a341'].execute();
 //console.log(session.entityManager.entities['_175fb71dd3064e6dabc2822e355f8fc7'].execute());

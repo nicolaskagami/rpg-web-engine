@@ -16,19 +16,32 @@ class Expression extends Entity
     }
     evaluate()
     {
+        var ast = this.ast;
+        if(ast.arguments)// evaluate subexpressions
+            for(var arg in this.ast.arguments)
+                if(ast.arguments[arg].property.name === 'output')
+                    if(this.__manager.entities[ast.arguments[arg].object.name])
+                        this.__manager.entities[ast.arguments[arg].object.name].evaluate()
         var scope = JSON.parse(this.__manager.getJSONEntitiesMap());
-        scope.join = function(a,b)
+                    
+        scope.OR = function(a,b)
         {
-            console.log("mofo")
-            c = a.concat(b)
-            console.log(c)
-            for(var i=0; i<c.length; ++i) 
-                for(var j=i+1; j<c.length; ++j)
+            var c = a.concat(b)
+            for(var i=0; i<c.length; i++) 
+                for(var j=i+1; j<c.length; j++)
                     if(c[i] === c[j])
                         c.splice(j--, 1);
             return c;
         }
-            //console.log(this.ast)
+        scope.AND = function(a,b)
+        {
+            var c = [] 
+            for(var i=0; i<a.length; i++) 
+                for(var j=0; j<b.length; j++)
+                    if(a[i] === b[j])
+                        c.push(a[i])
+            return c;
+        }
         try {
             this.output = (expr.eval(this.ast, scope))
             return this.output;
