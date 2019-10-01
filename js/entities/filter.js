@@ -1,5 +1,5 @@
 const Entity = require('./entity');
-const math = require('mathjs');
+const expr = require('expression-eval')
 class Filter extends Entity
 {
     constructor({object, input, filter, filterInput})
@@ -12,6 +12,8 @@ class Filter extends Entity
                 throw new Error("Filter needs a filter expression")
             this.output = [];
             this.filter = filter
+            this.ast= expr.parse(filter)
+                console.log(this.ast)
             if(input)
                 this.input = input 
             if(filterInput)
@@ -37,9 +39,9 @@ class Filter extends Entity
             var scope = entities[i]
             if(!prefilter || prefilter.includes(scope.__uuid))
             {
-                var filter = this.filter; 
+                var filter = this.ast; 
                 try {
-                    if(math.evaluate(filter, scope))
+                    if(expr.eval(filter, scope))
                         output.push(scope.__uuid);
                 }catch(e){ }
             }
