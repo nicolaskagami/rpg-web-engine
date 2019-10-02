@@ -1,5 +1,5 @@
 const Entity = require('./entity');
-class Condition extends Entity
+class Process extends Entity
 {
     constructor({object, expression, exitCondition, effects})
     {
@@ -16,7 +16,7 @@ class Condition extends Entity
     execute()
     {
         var expr = this.__manager.getEntity(this.expression)
-        if(expr && expr.evaluate())
+        if(expr && expr.evaluate() === true)
             for(var effect in this.effects)
             {
                 console.log("Effect", effect)
@@ -26,7 +26,7 @@ class Condition extends Entity
             }
 
         var exitExpr = this.__manager.getEntity(this.exitCondition)
-        if(!(exitExpr && !expr.evaluate()))
+        if(!(exitExpr && expr.evaluate() === false))
             this.end();
     }
     end()
@@ -40,6 +40,9 @@ class Condition extends Entity
         }
         if(expr) 
             expr.end();
+        var exitExpr = this.__manager.getEntity(this.exitCondition)
+        if(exitExpr)
+            exitExpr.end();
         super.end();
     
     }
@@ -47,4 +50,4 @@ class Condition extends Entity
 
 
 
-module.exports = Condition;
+module.exports = Process; 

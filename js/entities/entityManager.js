@@ -9,7 +9,7 @@ class EntityManager {
     }
     addEntity(entity)
     {
-       if(this.entities[entity.__uuid]) 
+        if(this.entities[entity.__uuid]) 
             throw new Error('Preexistent UUID')
         else
             this.entities[entity.__uuid] = entity;

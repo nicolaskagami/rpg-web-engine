@@ -11,11 +11,22 @@ class Expression extends Entity
             this.expression = expression;
             this.ast= expr.parse(expression);
             this.defaultValue = ((defaultValue != null && (typeof defaultValue === "boolean")) ? defaultValue : false)
-            this.output = []
+            this.output = null 
         }
     }
     evaluate()
     {
+        try {
+            if(this.output === null)
+                this.execute();
+            return this.output;
+        } catch (error) { 
+            return this.defaultValue; 
+        }
+    }
+    execute()
+    {
+        console.log("Exec: "+this.__uuid)
         var ast = this.ast;
         if(ast.arguments)// evaluate subexpressions
             for(var arg in this.ast.arguments)

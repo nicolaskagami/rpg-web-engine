@@ -6,6 +6,8 @@ class Effect extends Entity
         super({object: object});
         if(object == null)
         {
+            if(!(target && property && result))
+                throw new Error("new Effect Entity needs target, property, result")
             this.target = target;
             this.property = property;
             this.result = result;
