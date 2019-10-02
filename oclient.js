@@ -7,26 +7,42 @@ const readline = require('readline');
 const colors = require('./js/colors');
 
 
-var commands = {};
-var argsList = {};
-argsList['command'] = []
+var commands = { '/login': {},
+  '/create-entity': { type: 'entity-type', literal: {'default': {type: 'create-entity-default-args'}, 'Grid': {type: 'grid-arguments'}}}, 
+  '/assign-type': { type: 'entity-type', literal: {'default': { type: 'user'}}}
+}
+var info = {
+    'entity-type': [ 'Grid', 'Entity'],
+    'grid-arguments': ['--grid', '--object'],
+    'user': [ 'Alice', 'Bob']
+}
 var autoComplete = function completer(line) 
 {
     var completions = [];
     const lineWords = line.split(' ');
     const lastWord = lineWords[lineWords.length-1];
-    const firstWord = lineWords[0];
-    if(lineWords.length == 1)
+    var command = lineWords.shift();
+
+    if(lineWords.length == 0)
     {
-        completions = argsList['command'];
-    }else if(firstWord == '/create-entity' && argsList['entity-type-args-'+lineWords[1]])
-    {
-        completions = argsList['entity-type-args-'+lineWords[1]]
-    }else if (commands[firstWord] && commands[firstWord][lineWords.length-2]) {
-        if(argsList[commands[firstWord][lineWords.length-2]])
-            completions = argsList[commands[firstWord][lineWords.length-2]]
+        completions = Object.keys(commands)
+    } else {
+        lineWords.pop();
+        var pointer = commands[command]
+        for(var i in lineWords)
+        {
+            var word = lineWords[i];
+            if(pointer.literal)
+            {
+                if(pointer.literal[word])
+                    pointer = pointer.literal[word];
+                else
+                    pointer = pointer.literal['default'];
+            }
+        }
+        if(info[pointer.type])
+            completions = info[pointer.type]
     }
-    consoleOut(completions)
     const hits = completions.filter((c) => c.startsWith(lastWord));
     return [hits, lastWord];
 }
@@ -47,18 +63,13 @@ const rl = readline.createInterface({
 
 function resetPrompt()
 {
+    consoleOut(commands)
     var promptLine = '';
     if(login)
         promptLine+=colors.FgBlue+login+colors.Reset+'@'+colors.FgGreen+ip+colors.Reset
     if(session)
         promptLine+=':'+colors.FgYellow+session+colors.Reset;
     rl.setPrompt(promptLine+' > ');
-}
-function getCommands(cmds)
-{
-    argsList['command'] = []
-    for(var i in cmds)
-        argsList['command'].push(i);
 }
 
 function requestPassword(args)
@@ -97,18 +108,6 @@ rl.on('line', function(line) {
 }).on('close',function(){
     process.exit(0);
 });
-function setupEntityTypesAutocomplete(data)
-{
-    argsList['entity-type'] = []
-    for(var i in data)
-    {
-        argsList['entity-type'].push(i);
-        for(var arg in data[i])
-        {
-            argsList['entity-type-args-'+i] = data[i]
-        }
-    }
-}
 var login = '';
 var session ='';
 serverHandle = colors.FgGreen+"Server"
@@ -118,15 +117,12 @@ socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Lost c
 socket.on("message", (data) => { consoleOut(data.username+": "+data.message)});
 socket.on("private message", ({from, to,message}) => { consoleOut(from+to+':'+message)})
 socket.on("command", (data) => { consoleOut(data.username+": "+data.message)});
-socket.on("command list", (data) => { getCommands(data); commands = data });
-socket.on("session list", (data) => { argsList['session'] = data; consoleOut(data) });
+socket.on("command list", (data) => { commands = data });
 socket.on("session user list", (data) => { consoleOut(data) });
 socket.on("enter session", (data) => { session = data; resetPrompt(); });
 socket.on("leave session", (data) => { session = ''; resetPrompt();});
-socket.on("user list", (data) => { argsList['user'] = data.users; consoleOut(data.users)});
 socket.on("login", (data) => { login = data.username; resetPrompt()});
-socket.on("entity list", (data) => { argsList['entity'] = data; consoleOut(data) });
-socket.on("entity type list", (data) => { setupEntityTypesAutocomplete(data) ; consoleOut(data) });
+socket.on("info", ({infoName,data}) => { info[infoName] = data});
 
 rl.setPrompt("> ");
 rl.prompt();

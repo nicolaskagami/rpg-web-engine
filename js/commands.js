@@ -11,14 +11,26 @@ class Command
     static execute({io, socket, cmd, args})
     {
         try{
-        if(io && socket && cmd && commands[cmd])
-            commands[cmd].method({io:io, socket:socket,cmd:cmd,args:args});
+            if(io && socket && cmd && commands[cmd])
+                commands[cmd].method({io:io, socket:socket,cmd:cmd,args:args});
         } catch(e) { console.log("Command Error: "+e)}
     }
     static updateCommands(socket)
     {
         socket.user.commands = Command.getCommandsByStates(socket.user.states);
         socket.emit('command list', socket.user.commands)
+    }
+    static sendEntTypeArgs(socket,session)
+    {
+        var args = session.getEntityTypeArgs();
+        var types = {}
+        for(var i in args)
+        {
+            var infoName = "entity-"+i+'-args'; 
+            socket.emit('info', {infoName: infoName, data: args[i]})
+            types[i] = infoName;
+        }
+        socket.emit('info', {infoName: 'entity-type-args', data: types})
     }
     static getCommandsByStates(states)
     {
@@ -45,7 +57,7 @@ new Command('login' ,{
         socket.user.addState('user');
         Command.updateCommands(socket);
 
-        io.sockets.emit('user list', {users: User.getUsers()});
+        io.sockets.emit('info', {infoName:'user', data: User.getUsers()});
         socket.emit('login', {username: username});
     }
 })
@@ -66,19 +78,26 @@ new Command('list-users', {
     command: '/list-users',
     state: 'guest',
     args: [], 
-    method: function({io, socket, cmd, args}) { socket.emit('user list', {users: User.getUsers()})}
+    method: function({io, socket, cmd, args}) { 
+        socket.emit('info', {infoName: 'user', data: User.getUsers()})
+        //socket.emit('user list', {users: User.getUsers()})
+    }
 })
 new Command('list-commands', {
     command: '/list-commands',
     state: 'guest',
     args: [], 
-    method: function({io, socket, cmd, args}) { socket.emit('command list', socket.user.commands)}
+    method: function({io, socket, cmd, args}) { 
+        socket.emit('command list', socket.user.commands)
+    }
 })
 new Command('list-sessions', {
     command: '/list-sessions',
     state: 'user',
     args: [], 
-    method: function({io, socket, cmd, args}) { socket.emit('session list', Session.getSessions())}
+    method: function({io, socket, cmd, args}) { 
+        socket.emit('info', {infoName: 'session', data:Session.getSessions()})
+    }
 })
 new Command('create-session', {
     command: '/create-session',
@@ -107,8 +126,9 @@ new Command('enter-session', {
                 socket.user.addState('session-master');
             Command.updateCommands(socket);
             socket.emit('enter session', sessionName)
-            socket.emit('session list', Session.getSessions())
-            socket.emit('session user list', session.getActiveUsers())
+            socket.emit('info', {infoName: 'session', data:Session.getSessions()})
+            socket.emit('info', {infoName: 'entity-type', data: session.getEntityTypes()})
+            Command.sendEntTypeArgs(socket, session);
         }
     }
 })
@@ -140,7 +160,7 @@ new Command('list-session-users', {
         {
             var session = Session.getSession(socket.session)
             if(session)
-                socket.emit('session user list', session.getActiveUsers())
+                socket.emit('info', {infoName: 'session-user', data:Session.getActiveUsers()})
         }
     }
 })
@@ -153,7 +173,7 @@ new Command('list-entities', {
         {
             var session = Session.getSession(socket.session)
             if(session)
-                socket.emit('session user list', session.getVisibleEntities(socket.user.username))
+                socket.emit('info', {infoName: 'visible-entities', data:Session.getVisibleEntities(socket.user.username)})
         }
     }
 })
@@ -166,14 +186,14 @@ new Command('list-entity-types', {
         {
             var session = Session.getSession(socket.session)
             if(session)
-                socket.emit('entity type list', session.getEntityTypes());
+                socket.emit('info', {infoName: 'entity-type', data: session.getEntityTypes()})
         }
     }
 })
 new Command('create-entity', {
     command: '/create-entity',
     state: 'session-master',
-    args: ['entity-type', 'entity-type-args'], 
+    args: ['entity-type-args'], 
     method: function({io, socket, cmd, args}) { 
         if(socket.session)
         {
@@ -188,4 +208,28 @@ new Command('create-entity', {
         }
     }
 })
+//Entgine Commands
+//
+new Command('list-snapshots', {
+    command: '/list-snapshots',
+    state: 'session-master',
+    args: [], 
+    method: function({io, socket, cmd, args}) { 
+        if(socket.session)
+        {
+            var session = Session.getSession(socket.session)
+            if(session && session.users[socket.user.username].role == "admin")
+            {
+                socket.emit('info', {infoName:'snapshot', data: session.listSnapshots()})
+            } 
+        }
+    }
+})
+//list-snapshot
+//load-snapshot
+//order-entity
+//list-agent-loop
+//set-agent-loop
+//execute-order
+//entgine.step
 module.exports = Command;

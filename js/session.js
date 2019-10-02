@@ -27,6 +27,22 @@ class Session
     getEntityTypes()
     {
         var ents = this.entityManager.getEntityTypes();
+        var entsArray = [];
+        for (var i in ents)
+        {
+            var args = /\{(.*)\}/.exec(ents[i])[1];
+            args = args.split(',')
+            for(var j in args)
+            {
+                args[j] = '--'+/[a-zA-Z_][0-9a-zA-Z_]*/.exec(args[j])[0]
+            } 
+            entsArray[i] = args
+        }
+        return entsArray;
+    }
+    getEntityTypeArgs()
+    {
+        var ents = this.entityManager.getEntityTypes();
         var entsArray = {};
         for (var i in ents)
         {
@@ -43,6 +59,7 @@ class Session
     newEntity(entityType, parameters)
     {
         console.log(entityType, parameters)
+        //this.entityManager.addEntity(new)
     }
     newUser(username)
     {
@@ -116,8 +133,28 @@ class Session
     }
     save(path)
     {
-        //Save Entgine (which has the entities)
+        //Save Entgine (which has the entities and snapshots)
         //Save User info
+        var sessionSave = {
+            users: JSON.stringify(this.users),
+            name: this.name,
+            entities: this.entityManager.getJSONEntitiesArray(),
+            entgine: JSON.stringify(this.entgine)
+        }
+        fs.writeFileSync(path, sessionSave)
+    }
+    load(path)
+    {
+        var sessionSave = JSON.parse(fs.readFileSync(path, 'utf8'));
+        this.name = sessionSave.name;
+        this.users = JSON.parse(sessionSave.name);
+        this.entgine = JSON.parse(sessionSave.name);
+        this.entityManager.loadEntities(sessionSave.entities);
+        
+    }
+    listSnapshots()
+    {
+        return this.entgine.history;
     }
     static getSessions()
     {

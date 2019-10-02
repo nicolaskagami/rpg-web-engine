@@ -76,10 +76,16 @@ class Entgine
     }
     undo()
     {
-        this.recoverSnapshot(this.history[this.history.length-1].uuid);
-        this.history.pop();
-        this.recoverSnapshot(this.history[this.history.length-1].uuid);
-        this.history.pop();
+        if(this.history && this.history.length)
+        {
+            this.recoverSnapshot(this.history[this.history.length-1].uuid);
+            this.history.pop();
+        }
+        if(this.history && this.history.length)
+        {
+            this.recoverSnapshot(this.history[this.history.length-1].uuid);
+            this.history.pop();
+        }
     }
 }
 module.exports = Entgine;
