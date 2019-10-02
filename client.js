@@ -127,6 +127,7 @@ socket.on("enter session", (data) => { session = data; resetPrompt(); });
 socket.on("leave session", (data) => { session = ''; resetPrompt();});
 socket.on("login", (data) => { login = data.username; resetPrompt()});
 socket.on("info", ({infoName,data}) => { info[infoName] = data});
+socket.on('command error', (data) => { consoleOut(data)}); 
 
 rl.setPrompt("> ");
 rl.prompt();

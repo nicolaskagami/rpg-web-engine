@@ -13,7 +13,9 @@ class Command
         try{
             if(io && socket && cmd && commands[cmd])
                 commands[cmd].method({io:io, socket:socket,cmd:cmd,args:args});
-        } catch(e) { console.log("Command Error: "+e)}
+        } catch(e) { 
+            socket.emit('command error',e.toString());
+        }
     }
     static updateCommands(socket)
     {
@@ -105,7 +107,7 @@ new Command('create-session', {
     args: ['name'], 
     method: function({io, socket, cmd, args}) { 
         new Session(args.split(' ')[0], socket.user.username)
-        socket.emit('session list', Session.getSessions())
+        socket.emit('info', {infoName: 'session', data:Session.getSessions()})
     }
 })
 new Command('enter-session', {
