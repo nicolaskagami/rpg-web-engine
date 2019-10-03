@@ -25,27 +25,30 @@ var autoComplete = function completer(line)
     } else {
         lineWords.pop();
         var argTypes = commands[command]
-        var pointer = argTypes[0];
-        var argIndex = 0; 
-        for(var i in lineWords)
+        if(argTypes)
         {
-            var word = lineWords[i];
-            if(isArray(info[pointer]))
+            var pointer = argTypes[0];
+            var argIndex = 0; 
+            for(var i in lineWords)
             {
-                argIndex++;
-                if(argTypes[argIndex])
-                    pointer = argTypes[argIndex]
-                else
-                    break;
-            }else if(info[pointer] && info[pointer][word])
-                    pointer = info[pointer][word]
+                var word = lineWords[i];
+                if(isArray(info[pointer]))
+                {
+                    argIndex++;
+                    if(argTypes[argIndex])
+                        pointer = argTypes[argIndex]
+                    else
+                        break;
+                }else if(info[pointer] && info[pointer][word])
+                        pointer = info[pointer][word]
+            }
+            if(pointer == null || !info[pointer])
+                completions = []
+            else if(isArray(info[pointer]))
+                completions = info[pointer];
+            else
+                completions = Object.keys(info[pointer])
         }
-        if(pointer == null || !info[pointer])
-            completions = []
-        else if(isArray(info[pointer]))
-            completions = info[pointer];
-        else
-            completions = Object.keys(info[pointer])
     }
     const hits = completions.filter((c) => c.startsWith(lastWord));
     return [hits, lastWord];
@@ -67,10 +70,9 @@ const rl = readline.createInterface({
 
 function resetPrompt()
 {
-    consoleOut(commands)
     var promptLine = '';
     if(login)
-        promptLine+=colors.FgBlue+login+colors.Reset+'@'+colors.FgGreen+ip+colors.Reset
+        promptLine+=colors.FgGreen+login+'@'+ip+colors.Reset
     if(session)
         promptLine+=':'+colors.FgYellow+session+colors.Reset;
     rl.setPrompt(promptLine+' > ');
@@ -116,16 +118,16 @@ var login = '';
 var session ='';
 serverHandle = colors.FgGreen+"Server"
 
-socket.on('connect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Connected to '+ip+':'+port);});
-socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Lost connection to '+ip+':'+port);});
+socket.on('connect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Connected to '+ip+':'+port); resetPrompt()});
+socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Lost connection to '+ip+':'+port); resetPrompt();});
 socket.on("message", (data) => { consoleOut(colors.FgBlue+data.username+": "+data.message)});
 socket.on("private message", ({from, to, message}) => { consoleOut(colors.FgMagenta+from+': '+message)})
 socket.on("command list", (data) => { commands = data });
 socket.on("enter session", (data) => { session = data; resetPrompt(); });
 socket.on("leave session", (data) => { session = ''; resetPrompt();});
 socket.on("login", (data) => { login = data.username; resetPrompt()});
-socket.on("info", ({infoName,data}) => { consoleOut({infoName:data}); info[infoName] = data});
+socket.on("info", ({infoName,data}) => { consoleOut(infoName+':'+data); info[infoName] = data});
 socket.on('command error', (data) => { consoleOut(data.replace(/^Error:/,colors.FgRed+"Error:"))}); 
 
-rl.setPrompt("> ");
+rl.setPrompt(colors.Reset+"> ");
 rl.prompt();

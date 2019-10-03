@@ -13,7 +13,9 @@ class User
             this.username = username;
             this.states = [];
             this.commands = [];
+            this.info = [];
             this.socketId = socketId;
+            this.sessionName = '';
         }
         users[username] = this;
     }
