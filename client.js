@@ -118,16 +118,14 @@ serverHandle = colors.FgGreen+"Server"
 
 socket.on('connect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Connected to '+ip+':'+port);});
 socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Lost connection to '+ip+':'+port);});
-socket.on("message", (data) => { consoleOut(data.username+": "+data.message)});
-socket.on("private message", ({from, to,message}) => { consoleOut(from+to+':'+message)})
-socket.on("command", (data) => { consoleOut(data.username+": "+data.message)});
+socket.on("message", (data) => { consoleOut(colors.FgBlue+data.username+": "+data.message)});
+socket.on("private message", ({from, to, message}) => { consoleOut(colors.FgMagenta+from+': '+message)})
 socket.on("command list", (data) => { commands = data });
-socket.on("session user list", (data) => { consoleOut(data) });
 socket.on("enter session", (data) => { session = data; resetPrompt(); });
 socket.on("leave session", (data) => { session = ''; resetPrompt();});
 socket.on("login", (data) => { login = data.username; resetPrompt()});
-socket.on("info", ({infoName,data}) => { info[infoName] = data});
-socket.on('command error', (data) => { consoleOut(data)}); 
+socket.on("info", ({infoName,data}) => { consoleOut({infoName:data}); info[infoName] = data});
+socket.on('command error', (data) => { consoleOut(data.replace(/^Error:/,colors.FgRed+"Error:"))}); 
 
 rl.setPrompt("> ");
 rl.prompt();
