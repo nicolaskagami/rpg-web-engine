@@ -58,7 +58,6 @@ class Command
 
 }
 module.exports = Command;
-
 new Command('request-info', {
     command: '/request-info',
     state: 'debug',

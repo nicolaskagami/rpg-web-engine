@@ -13,7 +13,7 @@ new Command('list-snapshots', {
             var session = Session.getSession(socket.session)
             if(session && session.users[socket.user.username].role == "admin")
             {
-                socket.emit('info', {infoName:'snapshot', data: session.listSnapshots()})
+                Command.updateInfo(socket, 'snapshot');
             } 
         }
     }
@@ -44,15 +44,55 @@ new Command('entgine-undo', {
             var session = Session.getSession(socket.session)
             var uuid = args.split(' ')[0];
             if(session && session.users[socket.user.username].role == "admin")
-            {
                 session.entgine.undo();
-            } 
+        }
+    }
+})
+new Command('entgine-step', {
+    command: '/entgine-step',
+    state: 'session-master',
+    args: [], 
+    method: function({io, socket, cmd, args}) { 
+        if(socket.session)
+        {
+            var session = Session.getSession(socket.session)
+            var uuid = args.split(' ')[0];
+            if(session && session.users[socket.user.username].role == "admin")
+                session.entgine.nextOrder();
+        }
+    }
+})
+new Command('entgine-loop', {
+    command: '/entgine-loop',
+    state: 'session-master',
+    args: [], 
+    method: function({io, socket, cmd, args}) { 
+        if(socket.session)
+        {
+            var session = Session.getSession(socket.session)
+            var uuid = args.split(' ')[0];
+            if(session && session.users[socket.user.username].role == "admin")
+                Command.updateInfo(socket, 'entgine-loop')
+        }
+    }
+})
+new Command('entgine-loop-set', {
+    command: '/entgine-loop-set',
+    state: 'session-master',
+    args: [], 
+    method: function({io, socket, cmd, args}) { 
+        if(socket.session)
+        {
+            var session = Session.getSession(socket.session)
+            var uuid = args.split(' ')[0];
+            if(session && session.users[socket.user.username].role == "admin")
+                Command.updateInfo(socket, 'entgine-loop')
         }
     }
 })
 new Command('order-entity', {
     command: '/order-entity',
-    state: 'session-master',
+    state: 'session',
     args: ['commanded-entity'], 
     method: function({io, socket, cmd, args}) { 
         if(socket.session)
@@ -61,10 +101,8 @@ new Command('order-entity', {
             var argArray = args.split(' ');
             var ent = argArray.shift();
             var order = argArray.join(' ')
-            if(session && session.users[socket.user.username].role == "admin")
-            {
+            if(session)
                 session.orderEntity(ent,order,socket.user.username )
-            } 
         }
     }
 })

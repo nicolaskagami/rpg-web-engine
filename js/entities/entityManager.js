@@ -81,6 +81,18 @@ class EntityManager {
             ents[i] = entityTypes[i].args;
         return ents;
     }
+    newEntity(type,parameters)
+    {
+        if(entityTypes[type])
+        {
+            var dynamicConstructor = entityTypes[type].constructor 
+            try {
+                var ent =  new dynamicConstructor(parameters);
+                this.addEntity(ent);
+                return ent.__uuid;
+            } catch (error) { console.log(error); }
+        }
+    }
     revive(object)
     {
         var entities = [];

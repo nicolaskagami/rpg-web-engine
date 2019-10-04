@@ -1,7 +1,6 @@
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
 const EntityManager = require('./entityManager');
-let _allEntities = {} ;
 class Entity 
 {
     constructor({object}) //Constructors should receive objects
@@ -13,6 +12,8 @@ class Entity
             {
                 this[key] = object[key];
             }
+            if(!this._uuid)
+                this.__uuid = "_".concat(uuidv4().replace(/-/g, ''));
 
         } else {
             this.__uuid = "_".concat(uuidv4().replace(/-/g, ''));

@@ -76,6 +76,7 @@ function resetPrompt()
     if(session)
         promptLine+=':'+colors.FgYellow+session+colors.Reset;
     rl.setPrompt(promptLine+' > ');
+    rl.prompt()
 }
 
 function requestPassword(args)
@@ -129,5 +130,5 @@ socket.on("login", (data) => { login = data.username; resetPrompt()});
 socket.on("info", ({infoName,data}) => { consoleOut(infoName+':'+data); info[infoName] = data});
 socket.on('command error', (data) => { consoleOut(data.replace(/^Error:/,colors.FgRed+"Error:"))}); 
 
-rl.setPrompt(colors.Reset+"> ");
+resetPrompt();
 rl.prompt();

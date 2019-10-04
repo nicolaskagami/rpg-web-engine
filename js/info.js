@@ -30,7 +30,14 @@ new Info('visible-entity',function(socket) {
             return session.getVisibleEntities(socket.user.username)
     }
 })
-new Info('commanded-entity',function(socket) { return Session.getSessions(); } ) 
+new Info('commanded-entity',function(socket) { 
+    if(socket.session)
+    {
+        var session = Session.getSession(socket.session)
+        if(session)
+            return session.getCommandedEntities(socket.user.username)
+    }
+})
 new Info('entity-type-args',function(socket) { 
     var session = Session.getSession(socket.session);
     var args = session.getEntityTypeArgs();
@@ -52,3 +59,11 @@ new Info('snapshot',function(socket) {
     }
 })
 module.exports = Info;
+new Info('entgine-loop',function(socket) {
+    if(socket.session)
+    {
+        var session = Session.getSession(socket.session)
+        if(session && session.users[socket.user.username].role == "admin")
+            return session.entgine.getAgentLoop()
+    }
+})

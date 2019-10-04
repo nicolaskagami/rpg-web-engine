@@ -59,7 +59,16 @@ class Session
     newEntity(entityType, parameters)
     {
         console.log(entityType, parameters)
-        //this.entityManager.addEntity(new)
+        var object = {}
+        var match;
+        var regex = /--([a-zA-Z0-9_]*)\ *([a-zA-Z0-9_]*)/g
+        do
+        {
+            match = regex.exec(parameters)
+            if(match)
+                object[match[1]] = match[2];
+        } while(match)
+        return this.entityManager.newEntity(entityType, object)
     }
     newUser(username)
     {
@@ -184,7 +193,7 @@ class Session
 }
 module.exports = Session;
 
-var session = new Session();
+var session = new Session('s1');
 //session.newUser('Bob');
 //session.insertVisibleEntities({username: 'Bob',entities:['_771919bef77243d1b3c3e4a6556ef46e','_e71919bef77243d1b3c3e4a6556ef46e']})
 session.loadEntities('./assets/b.json')

@@ -104,13 +104,14 @@ new Command('create-entity', {
     method: function({io, socket, cmd, args}) { 
         if(socket.session)
         {
-            var entityType = args.split(' ')[0]; 
-            var parameters = args.split(' ')[1]; 
+            var argArray = args.split(' ');
+            var entityType = argArray.shift();
+            var parameters = argArray.join(' ')
             var session = Session.getSession(socket.session)
             if(session && session.users[socket.user.username].role == "admin")
             {
-                session.newEntity(entityType, parameters);
-                //session.insertVisibleEntities({ username: socket.user.username,entities: [entity]})
+                var entUUID = session.newEntity(entityType, parameters);
+                session.insertVisibleEntities({ username: socket.user.username,entities: [entUUID]})
             } 
         }
     }
