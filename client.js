@@ -1,5 +1,6 @@
 const io = require('socket.io-client');
 const fs = require('fs')
+const uuidv4 = require('uuid/v4');
 var processArgs = process.argv.slice(2);
 var ip = (processArgs.length > 0) ? processArgs[0] : 'localhost'
 var port = (processArgs.length > 1) ? processArgs[1] : '80'
@@ -10,9 +11,11 @@ const colors = require('./js/colors');
 function isArray(what) {
     return Object.prototype.toString.call(what) === '[object Array]';
 }
-
+var bufferedInput = []
 var commands = { }
 var info = {}
+var vars = {}
+
 var autoComplete = function completer(line) 
 {
     var completions = [];
@@ -99,65 +102,67 @@ function requestPassword(args)
         rl.output.write(stringToWrite);
     };
 }
-var vars = {}
 function command(line)
 {
-    if (line[0] == "/" && line.length > 1) {
+    if (line[0] == "/" && line.length > 1) {//Command
+        line = evalLocalVars(line)
         var cmd = line.match(/[a-zA-Z0-9-]+\b/)[0];
         var arg = line.substr(cmd.length+2, line.length);
         if(cmd == "login")
             requestPassword(arg)
         else
             socket.emit('command',{cmd: cmd, args: arg});
-        rl.prompt();
+        nextLine()
     } else if (line[0] == "$" && line.length > 1) {
-        if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\/.*$/))
-        {
+        if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\/.*$/)) { //Cmd to var
             var target = line.match(/^\$([a-zA-Z0-9]+)\ *=.*$/)[1]
             var cmdLine = line.match(/^\$[a-zA-Z0-9]+\ *=\ *(\/.*)$/)[1]
+            cmdLine = evalLocalVars(cmdLine)
             var cmd = cmdLine.match(/[a-zA-Z0-9-]+\b/)[0];
             var arg = cmdLine.substr(cmd.length+2, cmdLine.length);
-            socket.emit('command',{cmd: cmd, args: arg});
-            socket.once("info", ({infoName,data}) => { vars[target] = JSON.parse(JSON.stringify(data));rl.prompt()})
-        } else if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$[a-zA-Z0-9]+\ *$/)){ 
-
+            var cmdId = uuidv4();
+            rl.pause();
+            socket.emit('command',{cmd: cmd, args: arg, cmdId: cmdId});
+            socket.once(cmdId, (data) => { 
+                vars[target] = JSON.parse(JSON.stringify(data));
+                nextLine()
+            })
+        } else if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$[a-zA-Z0-9]+\ *$/)){ //Var to var
             var target = line.match(/^\$([a-zA-Z0-9]+)\ *=\ *\$[a-zA-Z0-9]+\ *$/)[1]
             var source = line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$([a-zA-Z0-9]+)\ *$/)[1]
             if(vars[source])
-            {
-                vars[target] = vars[source];
-            }
-        rl.prompt();
+                vars[target] = JSON.parse(JSON.stringify(vars[source]));
+            nextLine()
         }
 
     } else {
-        var regex = /\$([a-zA-Z0-9]+)/g;
-        line = line.replace(regex, (match)=> { 
-            match = match.substr(1);
-            return (vars[match]) ? JSON.stringify(vars[match]) : '$'+match;
-        })
+        line = evalLocalVars(line)
         socket.emit('message', line)
-        rl.prompt();
+        nextLine()
     }
 }
 function evalLocalVars(line)
 {
     var regex = /\$([a-zA-Z0-9]+)/g;
-    var match;
-    do{
-    } while(match)
+    return line.replace(regex, (match)=> {
+        match = match.substr(1);
+        return (vars[match]) ? JSON.stringify(vars[match]) : '$'+match;
+    })
+}
+function nextLine()
+{
+    if(bufferedInput.length>0)
+        command(bufferedInput.shift())
+    rl.prompt()
 }
 rl.on('line', function(line) {
     if (line[0] == "<" && line.length > 1) {
         var file = line.match(/[a-zA-Z0-9.]+\b/)[0];
-        const readInterface = readline.createInterface({
-            input: fs.createReadStream(file,'utf-8'),
-            output: process.stdout,
-            console: false
+        var readInterface = readline.createInterface({
+            input: fs.createReadStream(file,'utf-8')
         });
-        readInterface.on('line', function(line) {
-            command(line);
-        });
+        readInterface.on('line', function(line) { bufferedInput.push(line)});
+        readInterface.on('close', function(line) { nextLine()});
 
     } else {
         command(line);

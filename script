@@ -2,7 +2,8 @@
 /create-session s2
 /enter-session s2
 /list-entity-types
-/create-entity Grid --height 2 --width 3
-/create-entity Grid --height 1 --width 3
-/create-entity Grid --height 4 --width 2
+$a = /create-entity Grid --height 2 --width 3
+$b = /create-entity Grid --height 1 --width 3
+$c = /create-entity Grid --height 4 --width 2
 /list-entities
+$d = /create-entity Expression --expression [$a,$b,$c]

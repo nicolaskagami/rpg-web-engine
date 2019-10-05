@@ -9,11 +9,14 @@ class Command
         commands[commandName] = commandDescriptor 
     }
 
-    static execute({io, socket, cmd, args})
+    static execute({io, socket, cmd, args, cmdId})
     {
         try{
             if(io && socket && cmd && commands[cmd])
-                commands[cmd].method({io:io, socket:socket,cmd:cmd,args:args});
+            {
+                var answer = commands[cmd].method({io:io, socket:socket,cmd:cmd,args:args,cmdId:cmdId});
+                socket.emit(cmdId, answer);
+            }
         } catch(e) { 
             socket.emit('command error',e.toString());
             console.log(e)

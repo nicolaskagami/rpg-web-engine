@@ -36,6 +36,6 @@ io.on('connection', (socket) =>
     Command.updateInfo(socket,'client-login');
 
     socket.on('message', (data) => { message({ socket:socket, data:data}) });
-    socket.on('command', ({cmd, args}) => { Command.execute({io:io, socket:socket, cmd: cmd, args: args}) })
+    socket.on('command', ({cmd, args, cmdId}) => { Command.execute({io:io, socket:socket, cmd: cmd, args: args, cmdId:cmdId}) })
     socket.on('disconnect', () => {removeUser(socket.user.username)});
 });

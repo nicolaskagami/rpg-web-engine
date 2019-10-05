@@ -111,7 +111,8 @@ new Command('create-entity', {
                 session.insertVisibleEntities({ username: socket.user.username,entities: [entUUID]})
                 session.insertCommandedEntities({ username: socket.user.username,entities: [entUUID]})
                 socket.emit('message', {username:"new "+entityType,message:entUUID});
-                socket.emit('info', {infoName:"answer",data:entUUID});
+                //socket.emit('info', {infoName:"answer",data:entUUID});
+                return entUUID;
             } 
         }
     }
