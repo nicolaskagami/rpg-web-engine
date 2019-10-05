@@ -70,7 +70,6 @@ new Command('entgine-loop', {
         if(socket.session)
         {
             var session = Session.getSession(socket.session)
-            var uuid = args.split(' ')[0];
             if(session && session.users[socket.user.username].role == "admin")
                 Command.updateInfo(socket, 'entgine-loop')
         }
@@ -84,9 +83,11 @@ new Command('entgine-loop-set', {
         if(socket.session)
         {
             var session = Session.getSession(socket.session)
-            var uuid = args.split(' ')[0];
             if(session && session.users[socket.user.username].role == "admin")
+            {
+                session.setAgentLoop(args)
                 Command.updateInfo(socket, 'entgine-loop')
+            }
         }
     }
 })

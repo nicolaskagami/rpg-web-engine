@@ -61,7 +61,7 @@ class Session
         console.log(entityType, parameters)
         var object = {}
         var match;
-        var regex = /--([a-zA-Z0-9_]*)\ *([a-zA-Z0-9_]*)/g
+        var regex = /--([a-zA-Z0-9_]*)\ *([\'\"\[\]a-zA-Z0-9_\-\,]*)/g
         do
         {
             match = regex.exec(parameters)
@@ -160,6 +160,17 @@ class Session
         this.entgine = JSON.parse(sessionSave.name);
         this.entityManager.loadEntities(sessionSave.entities);
         
+    }
+    setAgentLoop(args)
+    {
+        var loop = [];
+        var ents = args.split(',')
+        for(var i in ents)
+        {
+            if(this.entityManager.getEntity(ents[i]))
+                loop.push(ents)
+        }
+        this.entgine.setAgentLoop(loop)
     }
     listSnapshots()
     {

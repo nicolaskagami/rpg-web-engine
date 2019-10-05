@@ -12,11 +12,14 @@ class Info
         return infos[name];
     }
 }
+new Info('client-login',function(socket) { return socket.user.username })
+new Info('client-session',function(socket) { return socket.session })
 new Info('user',function(socket) { return User.getUsers(); } ) 
 new Info('session',function(socket) { return Session.getSessions(); } ) 
 new Info('session-user',function(socket) { 
     var session = Session.getSession(socket.session);
-    return session.getActiveUsers();
+    if(session)
+        return session.getActiveUsers();
 })
 new Info('entity-type',function(socket) { 
     var session = Session.getSession(socket.session);
@@ -58,7 +61,6 @@ new Info('snapshot',function(socket) {
             return session.listSnapshots()
     }
 })
-module.exports = Info;
 new Info('entgine-loop',function(socket) {
     if(socket.session)
     {
@@ -67,3 +69,4 @@ new Info('entgine-loop',function(socket) {
             return session.entgine.getAgentLoop()
     }
 })
+module.exports = Info;

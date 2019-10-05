@@ -15,7 +15,8 @@ new Command('login' ,{
         socket.user.addState('user');
         Command.updateCommands(socket);
         Command.updateGlobalInfo(io,'user');
-        socket.emit('login', {username: username});
+        Command.updateInfo(socket, 'client-login');
+//        socket.emit('login', {username: username});
     }
 })
 new Command('pm' ,{

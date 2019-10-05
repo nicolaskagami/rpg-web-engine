@@ -1,4 +1,5 @@
 const io = require('socket.io-client');
+const fs = require('fs')
 var processArgs = process.argv.slice(2);
 var ip = (processArgs.length > 0) ? processArgs[0] : 'localhost'
 var port = (processArgs.length > 1) ? processArgs[1] : '80'
@@ -59,7 +60,7 @@ function consoleOut(msg)
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
     console.log(msg);
-    rl.prompt(true);
+    resetPrompt()
 }
 
 const rl = readline.createInterface({
@@ -71,12 +72,12 @@ const rl = readline.createInterface({
 function resetPrompt()
 {
     var promptLine = '';
-    if(login)
-        promptLine+=colors.FgGreen+login+'@'+ip+colors.Reset
-    if(session)
-        promptLine+=':'+colors.FgYellow+session+colors.Reset;
-    rl.setPrompt(promptLine+' > ');
-    rl.prompt()
+    if(info['client-login'])
+        promptLine+=colors.FgGreen+info['client-login']+'@'+ip
+    if(info['client-session'])
+        promptLine+=':'+colors.FgYellow+info['client-session']
+    rl.setPrompt(promptLine+colors.Reset+' > ');
+    rl.prompt(true)
 }
 
 function requestPassword(args)
@@ -98,37 +99,109 @@ function requestPassword(args)
         rl.output.write(stringToWrite);
     };
 }
-
-rl.on('line', function(line) {
+var vars = {}
+function command(line)
+{
     if (line[0] == "/" && line.length > 1) {
-        var cmd = line.match(/[a-z-]+\b/)[0];
+        var cmd = line.match(/[a-zA-Z0-9-]+\b/)[0];
         var arg = line.substr(cmd.length+2, line.length);
         if(cmd == "login")
             requestPassword(arg)
         else
             socket.emit('command',{cmd: cmd, args: arg});
         rl.prompt();
+    } else if (line[0] == "$" && line.length > 1) {
+        if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\/.*$/))
+        {
+            var target = line.match(/^\$([a-zA-Z0-9]+)\ *=.*$/)[1]
+            var cmdLine = line.match(/^\$[a-zA-Z0-9]+\ *=\ *(\/.*)$/)[1]
+            var cmd = cmdLine.match(/[a-zA-Z0-9-]+\b/)[0];
+            var arg = cmdLine.substr(cmd.length+2, cmdLine.length);
+            socket.emit('command',{cmd: cmd, args: arg});
+            socket.once("info", ({infoName,data}) => { vars[target] = JSON.parse(JSON.stringify(data));rl.prompt()})
+        } else if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$[a-zA-Z0-9]+\ *$/)){ 
+
+            var target = line.match(/^\$([a-zA-Z0-9]+)\ *=\ *\$[a-zA-Z0-9]+\ *$/)[1]
+            var source = line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$([a-zA-Z0-9]+)\ *$/)[1]
+            if(vars[source])
+            {
+                vars[target] = vars[source];
+            }
+        rl.prompt();
+        }
+
     } else {
+        var regex = /\$([a-zA-Z0-9]+)/g;
+        line = line.replace(regex, (match)=> { 
+            match = match.substr(1);
+            return (vars[match]) ? JSON.stringify(vars[match]) : '$'+match;
+        })
         socket.emit('message', line)
         rl.prompt();
     }
-}).on('close',function(){
-    process.exit(0);
-});
-var login = '';
-var session ='';
-serverHandle = colors.FgGreen+"Server"
+}
+function evalLocalVars(line)
+{
+    var regex = /\$([a-zA-Z0-9]+)/g;
+    var match;
+    do{
+    } while(match)
+}
+rl.on('line', function(line) {
+    if (line[0] == "<" && line.length > 1) {
+        var file = line.match(/[a-zA-Z0-9.]+\b/)[0];
+        const readInterface = readline.createInterface({
+            input: fs.createReadStream(file,'utf-8'),
+            output: process.stdout,
+            console: false
+        });
+        readInterface.on('line', function(line) {
+            command(line);
+        });
 
-socket.on('connect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Connected to '+ip+':'+port); resetPrompt()});
-socket.on('disconnect', ()=> { consoleOut(serverHandle+': '+colors.Reset+'Lost connection to '+ip+':'+port); resetPrompt();});
-socket.on("message", (data) => { consoleOut(colors.FgBlue+data.username+": "+data.message)});
-socket.on("private message", ({from, to, message}) => { consoleOut(colors.FgMagenta+from+': '+message)})
+    } else {
+        command(line);
+    }
+
+})
+rl.on('SIGINT', () => { 
+    rl.clearLine(process.stdin);
+    resetPrompt();
+})
+rl.on('close',function(){ process.exit(0); });
+function serverMessage(line)
+{
+    var serverHandle = colors.FgGreen+ip+':'+port+": "
+    consoleOut(serverHandle+line)
+    resetPrompt();
+}
+function userMessage(username, msg)
+{
+    var userHandle= colors.FgBlue+username+": "
+    consoleOut(userHandle+msg)
+}
+function privateMessage(username, msg)
+{
+    var userHandle= colors.FgMagenta+username+": "
+    consoleOut(userHandle+msg)
+}
+function errorMessage(error)
+{
+    var errorHandle= colors.FgRed
+    consoleOut(errorHandle+error)
+}
+function infoMessage(name, data)
+{
+    var infoHandle= colors.FgYellow+name+": "
+    consoleOut(infoHandle+data)
+    resetPrompt();
+}
+socket.on('connect', ()=> { serverMessage("Connected") });
+socket.on('disconnect', ()=> { serverMessage("Disconnected") });
+socket.on("message", ({username, message}) => { userMessage(username, message) }); 
+socket.on("private message", ({from, to, message}) => { privateMessage(from, message) }); 
 socket.on("command list", (data) => { commands = data });
-socket.on("enter session", (data) => { session = data; resetPrompt(); });
-socket.on("leave session", (data) => { session = ''; resetPrompt();});
-socket.on("login", (data) => { login = data.username; resetPrompt()});
-socket.on("info", ({infoName,data}) => { consoleOut(infoName+':'+data); info[infoName] = data});
-socket.on('command error', (data) => { consoleOut(data.replace(/^Error:/,colors.FgRed+"Error:"))}); 
+socket.on("info", ({infoName,data}) => {info[infoName] = data;  infoMessage(infoName,data); });
+socket.on('command error', (data) => { errorMessage(data) });
 
 resetPrompt();
-rl.prompt();

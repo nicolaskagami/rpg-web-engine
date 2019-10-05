@@ -1,0 +1,8 @@
+/list-users
+/create-session s2
+/enter-session s2
+/list-entity-types
+/create-entity Grid --height 2 --width 3
+/create-entity Grid --height 1 --width 3
+/create-entity Grid --height 4 --width 2
+/list-entities

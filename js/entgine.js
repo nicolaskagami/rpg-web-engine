@@ -43,7 +43,12 @@ class Entgine
     }
     executeOrder(ent, order)
     {
-        console.log("Order <"+ent+"> "+order)
+        var entPointer = this.entityManager.getEntity(ent)
+        if(entPointer && entPointer[order])
+        {
+            console.log("Order <"+ent+"> "+order)
+            entPointer[order]()
+        }
         this.incrementAgentIndex();
         this.saveSnapshot(ent);
     }

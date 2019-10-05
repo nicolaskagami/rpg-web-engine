@@ -34,6 +34,17 @@ class Expression extends Entity
                     if(this.__manager.entities[ast.arguments[arg].object.name])
                         this.__manager.entities[ast.arguments[arg].object.name].evaluate()
         var scope = JSON.parse(this.__manager.getJSONEntitiesMap());
+        scope.FILTER= function(array,expr)
+        {
+            var result = []
+            for(var i=0; i < array.length;i++) 
+            {
+                var ent = array[i]
+                if(expr)
+                    result.push(array[i])
+            }
+            return result;
+        }
                     
         scope.OR = function(a,b)
         {

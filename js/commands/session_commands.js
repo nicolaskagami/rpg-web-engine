@@ -40,7 +40,8 @@ new Command('enter-session', {
             if(session.users[username].role == "admin")
                 socket.user.addState('session-master');
             Command.updateCommands(socket);
-            socket.emit('enter session', sessionName)
+            //socket.emit('enter session', sessionName)
+                Command.updateInfo(socket, 'client-session');
 
             Command.updateGlobalInfo(io, 'session-user')
             Command.updateInfo(socket, 'entity-type-args')
@@ -63,6 +64,7 @@ new Command('leave-session', {
                 Command.updateCommands(socket);
                 socket.session = '';
                 socket.emit('leave session')
+                Command.updateInfo(socket, 'client-session');
                 Command.updateGlobalInfo(io, 'session-user')
             }
         }
@@ -89,12 +91,7 @@ new Command('list-entity-types', {
     state: 'session',
     args: [], 
     method: function({io, socket, cmd, args}) { 
-        if(socket.session)
-        {
-            var session = Session.getSession(socket.session)
-            if(session)
-                socket.emit('info', {infoName: 'entity-type', data: session.getEntityTypes()})
-        }
+        Command.updateInfo(socket, 'entity-type')
     }
 })
 new Command('create-entity', {
@@ -112,6 +109,9 @@ new Command('create-entity', {
             {
                 var entUUID = session.newEntity(entityType, parameters);
                 session.insertVisibleEntities({ username: socket.user.username,entities: [entUUID]})
+                session.insertCommandedEntities({ username: socket.user.username,entities: [entUUID]})
+                socket.emit('message', {username:"new "+entityType,message:entUUID});
+                socket.emit('info', {infoName:"answer",data:entUUID});
             } 
         }
     }
