@@ -9,6 +9,7 @@ class Expression extends Entity
         if(object == null)
         {
             this.expression = expression;
+            console.log(expression)
             this.ast= expr.parse(expression);
             this.defaultValue = ((defaultValue != null && (typeof defaultValue === "boolean")) ? defaultValue : false)
             this.output = null 
@@ -30,17 +31,23 @@ class Expression extends Entity
         var ast = this.ast;
         if(ast.arguments)// evaluate subexpressions
             for(var arg in this.ast.arguments)
-                if(ast.arguments[arg].property.name === 'output')
+                if(ast.arguments[arg].property && ast.arguments[arg].property.name === 'output')
                     if(this.__manager.entities[ast.arguments[arg].object.name])
                         this.__manager.entities[ast.arguments[arg].object.name].evaluate()
         var scope = JSON.parse(this.__manager.getJSONEntitiesMap());
-        scope.FILTER= function(array,expr)
+        var internalScope = JSON.parse(this.__manager.getJSONEntitiesMap());
+        scope.FILTER= function(array,expression)
         {
             var result = []
             for(var i=0; i < array.length;i++) 
             {
-                var ent = array[i]
-                if(expr)
+                var ent = '';
+                var ast2 = expr.parse(expression)
+                if(internalScope[array[i]])
+                    ent = internalScope[array[i]];
+                for (const key of Object.keys(ent)) 
+                    internalScope[key] = ent[key];
+                if(expr.eval(ast2, internalScope))
                     result.push(array[i])
             }
             return result;

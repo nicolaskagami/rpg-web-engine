@@ -6,4 +6,19 @@ $a = /create-entity Grid --height 2 --width 3
 $b = /create-entity Grid --height 1 --width 3
 $c = /create-entity Grid --height 4 --width 2
 /list-entities
-$d = /create-entity Expression --expression [$a,$b,$c]
+$d = /create-entity Expression --expression ["$a","$c"]
+$e = /create-entity Expression --expression ["$a","$b"]
+$f = /create-entity Expression --expression OR($d.output,$e.output)
+$g = /create-entity Expression --expression AND($d.output,$e.output)
+$h = /create-entity Expression --expression FILTER($f.output,"height > 2")
+$i = /create-entity Expression --expression FILTER($f.output,"width > 2")
+/entgine-loop-set $f,$g,$h,$i
+/order-entity $f evaluate
+/order-entity $g evaluate
+/order-entity $h evaluate
+/order-entity $i evaluate
+/entgine-step
+/entgine-step
+/entgine-step
+/entgine-step
+/list-entities

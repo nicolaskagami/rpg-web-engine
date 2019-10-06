@@ -146,7 +146,7 @@ function evalLocalVars(line)
     var regex = /\$([a-zA-Z0-9]+)/g;
     return line.replace(regex, (match)=> {
         match = match.substr(1);
-        return (vars[match]) ? JSON.stringify(vars[match]) : '$'+match;
+        return (vars[match]) ? vars[match] : '$'+match;
     })
 }
 function nextLine()
@@ -178,7 +178,6 @@ function serverMessage(line)
 {
     var serverHandle = colors.FgGreen+ip+':'+port+": "
     consoleOut(serverHandle+line)
-    resetPrompt();
 }
 function userMessage(username, msg)
 {
@@ -199,7 +198,6 @@ function infoMessage(name, data)
 {
     var infoHandle= colors.FgYellow+name+": "
     consoleOut(infoHandle+data)
-    resetPrompt();
 }
 socket.on('connect', ()=> { serverMessage("Connected") });
 socket.on('disconnect', ()=> { serverMessage("Disconnected") });
