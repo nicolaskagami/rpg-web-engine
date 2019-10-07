@@ -74,7 +74,7 @@ class Entgine
                 this.orders = JSON.parse(snapshot.orders); 
                 this.agentLoop = JSON.parse(snapshot.agentLoop); 
                 this.currentAgentIndex = snapshot.currentAgentIndex; 
-                this.entityManager.entities = [];
+                this.entityManager.entities = {};
                 this.entityManager.loadEntities(JSON.parse(snapshot.entities));
             }
         }

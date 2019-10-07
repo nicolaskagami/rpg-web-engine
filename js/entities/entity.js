@@ -12,7 +12,7 @@ class Entity
             {
                 this[key] = object[key];
             }
-            if(!this._uuid)
+            if(!this.__uuid)
                 this.__uuid = "_".concat(uuidv4().replace(/-/g, ''));
 
         } else {
