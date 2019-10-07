@@ -29,15 +29,7 @@ class Session
         var ents = this.entityManager.getEntityTypes();
         var entsArray = [];
         for (var i in ents)
-        {
-            var args = /\{(.*)\}/.exec(ents[i])[1];
-            args = args.split(',')
-            for(var j in args)
-            {
-                args[j] = '--'+/[a-zA-Z_][0-9a-zA-Z_]*/.exec(args[j])[0]
-            } 
-            entsArray[i] = args
-        }
+            entsArray.push(i)
         return entsArray;
     }
     getEntityTypeArgs()
@@ -46,8 +38,9 @@ class Session
         var entsArray = {};
         for (var i in ents)
         {
-            var args = /\{(.*)\}/.exec(ents[i])[1];
-            args = args.split(',')
+            //var args = /\{(.*)\}/.exec(ents[i])[1];
+            //args = args.split(',')
+            var args = ents[i]
             for(var j in args)
             {
                 args[j] = '--'+/[a-zA-Z_][0-9a-zA-Z_]*/.exec(args[j])[0]

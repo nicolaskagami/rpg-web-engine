@@ -123,20 +123,27 @@ for (const key of Object.keys(entities))
     if(entities[key].prototype instanceof Entity || entities[key].prototype == Entity.prototype)
     {
         entityTypes[(entities[key].name)] = 
-            {
-                constructor: entities[key],
-                args: getArgs(entities[key])
-            }
+        {
+            constructor: entities[key],
+            args: getArgs(entities[key])
+        }
     }
 }
 function getArgs(func)
 {
-    var functionString = func.toString().replace(/(\/\*[^*]*\*\/)|(\/\/[^*]*)/g, '').replace(/\s+/g, ' ');
-    var pat = /constructor[^(]*\(([^'"()]|("([^"]|(\')|(\"))*")|('([^']|(\')|(\"))*')|(\([^(]*\)))*\)/
-    var constructorParamMatch = pat.exec(functionString) 
-    if(!constructorParamMatch) return '';
-    var paramMatch = /\((.*)\)/.exec(constructorParamMatch[0])[1]
-    if(!paramMatch) return '';
-    return paramMatch.replace(/\s+/g,'').replace(/,/g, ', ') 
-
+    var args = []
+    var paramParser = new Proxy({}, {
+    get: (target, name) => args.push(name)
+    })
+    try {
+    var b = new func(paramParser)
+    } catch(e) {}
+    return args;
+    //var functionString = func.toString().replace(/(\/\*[^*]*\*\/)|(\/\/[^*]*)/g, '').replace(/\s+/g, ' ');
+    //var pat = /constructor[^(]*\(([^'"()]|("([^"]|(\')|(\"))*")|('([^']|(\')|(\"))*')|(\([^(]*\)))*\)/
+    //var constructorParamMatch = pat.exec(functionString) 
+    //if(!constructorParamMatch) return '';
+    //var paramMatch = /\((.*)\)/.exec(constructorParamMatch[0])[1]
+    //if(!paramMatch) return '';
+    //return paramMatch.replace(/\s+/g,'').replace(/,/g, ', ') 
 }
