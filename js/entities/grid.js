@@ -11,8 +11,8 @@ class Grid extends Entity
         super({object: object});
         if(object == null)
         {
-            this.height = height;
-            this.width = width;
+            this.height = parseInt(height);
+            this.width = parseInt(width);
             this.turn = 0;
             this.entities = {};//Objects: physical entities?
         }

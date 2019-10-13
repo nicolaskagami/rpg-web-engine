@@ -28,6 +28,7 @@ class Entity
     }
     end()
     {
+        console.log("End: "+this.__uuid)
         this.__manager.removeEntity(this.__uuid);
     }
 

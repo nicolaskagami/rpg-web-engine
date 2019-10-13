@@ -1,0 +1,15 @@
+/list-users
+/create-session s2
+/enter-session s2
+/list-entity-types
+$a = /create-entity Grid --height 2 --width 3
+$b = /create-entity Grid --height 1 --width 3
+$ex = /create-entity Expression --expression "$b.height > 1"
+$res = /create-entity Expression --expression ($b.height+1)
+$ef = /create-entity Modification --target $b --property height --result $res 
+/entgine-loop-set $ef
+/order-entity $ef execute 
+/order-entity $ef execute 
+/entgine-step
+/entgine-step
+/list-entities

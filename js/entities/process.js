@@ -7,7 +7,8 @@ class Process extends Entity
         if(object == null)
         {
             this.expression = expression;
-            this.effects = effects;
+
+            this.effects = JSON.parse(effects);
             if(exitCondition)
                 this.exitCondition = exitCondition
         }
@@ -16,17 +17,16 @@ class Process extends Entity
     execute()
     {
         var expr = this.__manager.getEntity(this.expression)
-        if(expr && expr.evaluate() === true)
+        if(expr && expr.evaluate() == true)
             for(var effect in this.effects)
             {
-                console.log("Effect", effect)
                 var eff = this.__manager.getEntity(this.effects[effect])
                 if(eff)
                     eff.execute()
             }
 
         var exitExpr = this.__manager.getEntity(this.exitCondition)
-        if(!(exitExpr && expr.evaluate() === false))
+        if(!(exitExpr && exitExpr.evaluate() === false))
             this.end();
     }
     end()
