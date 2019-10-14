@@ -7,8 +7,3 @@ $res = /create-entity Expression --expression ($b.height+1)
 $mod = /create-entity Modification --target $b --property height --result $res 
 $ef = /create-entity Effect --target $mod --method execute --parameters ""
 $p = /create-entity Process --expression $ex --effects ["$ef"] 
-/entgine-loop-set $p
-/order-entity $p execute
-/entgine-step
-/entgine-step
-/list-entities

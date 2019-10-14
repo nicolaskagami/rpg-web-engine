@@ -102,17 +102,27 @@ function requestPassword(args)
         rl.output.write(stringToWrite);
     };
 }
+function execLine({cmd,arg,cmdId,target})
+{
+    rl.pause();
+    socket.emit('command',{cmd: cmd, args: arg, cmdId: cmdId});
+    socket.once(cmdId, (data) => { 
+        if(target)
+            vars[target] = JSON.parse(JSON.stringify(data));
+        nextLine()
+    })
+}
 function command(line)
 {
     if (line[0] == "/" && line.length > 1) {//Command
         line = evalLocalVars(line)
         var cmd = line.match(/[a-zA-Z0-9-]+\b/)[0];
         var arg = line.substr(cmd.length+2, line.length);
+        var cmdId = uuidv4();
         if(cmd == "login")
             requestPassword(arg)
         else
-            socket.emit('command',{cmd: cmd, args: arg});
-        nextLine()
+            execLine({cmd:cmd, arg:arg, cmdId:cmdId})
     } else if (line[0] == "$" && line.length > 1) {
         if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\/.*$/)) { //Cmd to var
             var target = line.match(/^\$([a-zA-Z0-9]+)\ *=.*$/)[1]
@@ -121,12 +131,7 @@ function command(line)
             var cmd = cmdLine.match(/[a-zA-Z0-9-]+\b/)[0];
             var arg = cmdLine.substr(cmd.length+2, cmdLine.length);
             var cmdId = uuidv4();
-            rl.pause();
-            socket.emit('command',{cmd: cmd, args: arg, cmdId: cmdId});
-            socket.once(cmdId, (data) => { 
-                vars[target] = JSON.parse(JSON.stringify(data));
-                nextLine()
-            })
+            execLine({cmd:cmd, arg:arg, cmdId:cmdId, target:target})
         } else if(line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$[a-zA-Z0-9]+\ *$/)){ //Var to var
             var target = line.match(/^\$([a-zA-Z0-9]+)\ *=\ *\$[a-zA-Z0-9]+\ *$/)[1]
             var source = line.match(/^\$[a-zA-Z0-9]+\ *=\ *\$([a-zA-Z0-9]+)\ *$/)[1]
