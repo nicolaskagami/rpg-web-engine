@@ -1,5 +1,0 @@
-/entgine-loop-set $p
-/order-entity $p execute 
-/entgine-step
-/entgine-step
-/list-entities
