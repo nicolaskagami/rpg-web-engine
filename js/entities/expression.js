@@ -12,32 +12,30 @@ class Expression extends Entity
             console.log(expression)
             this.ast= expr.parse(expression);
             this.defaultValue = ((defaultValue != null && (typeof defaultValue === "boolean")) ? defaultValue : false)
-            this.output = null 
+            this._output = null 
         }
     }
-    evaluate()
+    get output()
     {
         try {
-            if(this.output === null)
+            if(this._output === null)
                 this.execute();
-            return this.output;
+            return this._output;
         } catch (error) { 
             return this.defaultValue; 
         }
     }
+    evaluate()
+    {
+        return this.output;
+    }
     execute()
     {
-        console.log("Exec: "+this.__uuid)
         var ast = this.ast;
-        if(ast.arguments)// evaluate subexpressions
-            for(var arg in this.ast.arguments)
-                if(ast.arguments[arg].property && ast.arguments[arg].property.name === 'output')
-                    if(this.__manager.entities[ast.arguments[arg].object.name])
-                        this.__manager.entities[ast.arguments[arg].object.name].evaluate()
         var scope = new Scope(this.__manager.getEntities());
         try {
-            this.output = (expr.eval(this.ast, scope))
-            return this.output;
+            this._output = (expr.eval(this.ast, scope))
+            return this._output;
         } catch (error) { return this.defaultValue; }
     }
 }
