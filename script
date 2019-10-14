@@ -12,11 +12,14 @@ $f = /create-entity Expression --expression OR($d.output,$e.output)
 $g = /create-entity Expression --expression AND($d.output,$e.output)
 $h = /create-entity Expression --expression FILTER($f.output,"height > 2")
 $i = /create-entity Expression --expression FILTER($f.output,"width > height")
-/entgine-loop-set $f,$g,$h,$i
+$j = /create-entity Expression --expression FILTER(OR(FILTER($f.output,"height > 2"),$i.output),"width > 1")
+/entgine-loop-set $f,$g,$h,$i,$j
 /order-entity $f evaluate
 /order-entity $g evaluate
 /order-entity $h evaluate
 /order-entity $i evaluate
+/order-entity $j evaluate
+/entgine-step
 /entgine-step
 /entgine-step
 /entgine-step

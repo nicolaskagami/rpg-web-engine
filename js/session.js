@@ -55,7 +55,7 @@ class Session
         var object = {}
         var match;
         //var regex = /--([a-zA-Z0-9_]*)\ *(([\'\"\[\]\(\)\.a-zA-Z0-9_\-\,]||(\".*\"))*)/g
-        var regex = /--([a-zA-Z0-9_]*)\ *(([a-zA-Z0-9_.,]|\([^)]*\)|\"[^"]*\"|\'[^']*'\'|\[[^\]]*\])*)/g
+        var regex = /--([a-zA-Z0-9_]*)\ *(([a-zA-Z0-9_.,]|\([^--]*\)|\"[^"]*\"|\'[^']*'\'|\[[^\]]*\])*)/g
         do
         {
             match = regex.exec(parameters)
