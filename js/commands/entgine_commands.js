@@ -107,3 +107,37 @@ new Command('order-entity', {
         }
     }
 })
+new Command('execute', {
+    command: '/execute',
+    state: 'session-master',
+    args: [], 
+    method: function({io, socket, cmd, args}) { 
+        if(socket.session)
+        {
+            var session = Session.getSession(socket.session)
+            if(session && session.users[socket.user.username].role == "admin")
+            {
+                session.entgine.execute(args)
+            } 
+        }
+    }
+})
+new Command('entity-edit', {
+    command: '/entity-edit',
+    state: 'session-master',
+    args: [], 
+    method: function({io, socket, cmd, args}) { 
+        if(socket.session)
+        {
+            var session = Session.getSession(socket.session)
+            var argArray = args.split(' ');
+            var ent = argArray.shift();
+            var attr = argArray.shift();
+            var result = argArray.join(' ')
+            if(session && session.users[socket.user.username].role == "admin")
+            {
+                session.entgine.edit({entity:ent,attribute:attr,result:result})
+            } 
+        }
+    }
+})

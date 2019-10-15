@@ -11,7 +11,7 @@ class Attribute extends Entity
             this.target = target;
             this.property = property;
             this.result = result;
-            this._output =null;
+            this._output = null;
             this.mods = []
         }
     }
@@ -20,6 +20,18 @@ class Attribute extends Entity
         if(this._output === null)
             this.execute();
         return this._output;
+    }
+    reset()
+    {
+        this._output = null;
+    }
+    cleanMods()
+    {
+        var newMods = [];
+        for(var i in this.mods)
+            if(this.__manager.getEntity(this.mods[i]))
+                newMods.push(this.mods[i])
+        this.mods = newMods;
     }
     execute()
     {

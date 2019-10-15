@@ -25,6 +25,10 @@ class Expression extends Entity
             return this.defaultValue; 
         }
     }
+    reset()
+    {
+        this._output = null;
+    }
     evaluate()
     {
         return this.output;
@@ -35,6 +39,7 @@ class Expression extends Entity
         var scope = new Scope(this.__manager.getEntities());
         try {
             this._output = (expr.eval(this.ast, scope))
+            console.log(scope)
             return this._output;
         } catch (error) { return this.defaultValue; }
     }

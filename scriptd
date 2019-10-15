@@ -1,0 +1,21 @@
+/create-session s1
+/enter-session s1
+$sys = /create-entity Script
+$a = /create-entity Grid --height 2 --width 3
+$area = /create-entity Expression --expression ($a.height*$a.width)
+/execute $sys.insertCommand('$area','execute')
+$attr = /create-entity Attribute --target $a --property area --result $area
+/execute $attr.apply()
+/execute $sys.insertCommand('$attr','execute')
+$finalex = /create-entity Expression --expression ($a.area+2)
+/execute $sys.insertCommand('$finalex','execute')
+$ef2 = /create-entity Effect --target $attr --method newMod --parameters $finalex
+/execute $sys.insertCommand('$ef2','execute')
+$ex = /create-entity Expression --expression ($a.area>6)
+/execute $sys.insertCommand('$ex','execute')
+$p = /create-entity Process --expression $ex --effects ["$ef2"] 
+/execute $sys.insertCommand('$p','execute')
+/entgine-loop-set $sys
+/order-entity $sys execute
+/entgine-step
+/list-entities

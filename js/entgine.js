@@ -1,5 +1,6 @@
 const uuidv4 = require('uuid/v4');
 const EntityManager = require('./entities/entityManager')
+const Expression = require('./entities/expression')
 class Entgine
 {
     constructor(entManager)
@@ -30,6 +31,24 @@ class Entgine
     getAgentLoop()
     {
         return this.agentLoop;
+    }
+    edit({entity,attribute,result})
+    {
+        var ent = this.entityManager.getEntity(entity) 
+        if(ent)
+        {
+            var expr = new Expression({expression:result}) 
+            this.entityManager.addEntity(expr)
+            ent[attribute] = (expr.execute())
+            this.entityManager.removeEntity(expr.__uuid)
+        }
+    }
+    execute(expression)
+    {
+        var expr = new Expression({expression:expression}) 
+        this.entityManager.addEntity(expr)
+        expr.execute()
+        this.entityManager.removeEntity(expr.__uuid)
     }
     setAgentLoop(newLoop)
     {
