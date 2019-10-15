@@ -44,9 +44,9 @@ class Entgine
     executeOrder(ent, order)
     {
         var entPointer = this.entityManager.getEntity(ent)
+            console.log("Order <"+ent+"> "+order)
         if(entPointer && entPointer[order])
         {
-            console.log("Order <"+ent+"> "+order)
             entPointer[order]()
         }
         this.incrementAgentIndex();

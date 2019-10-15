@@ -6,7 +6,6 @@ class Modification extends Entity
         super({object: object});
         if(object == null)
         {
-            console.log(target, property, result)
             if(!(target && property && result))
                 throw new Error("new Modification Entity needs target, property, result")
             this.target = target;

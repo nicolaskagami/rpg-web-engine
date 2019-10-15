@@ -19,7 +19,15 @@ function defGetSet (object,field_name) {
         }
     });
 }
-defGetSet(a,'b');
+Object.defineProperty (a, 'b', {
+    get: function () { 
+        return 6 
+    },
+    set: function (new_value) {
+        console.log('SET', new_value);
+    }
+});
+//defGetSet(a,'b');
 console.log(a.b)
 a.b = 3
 console.log(a.b)

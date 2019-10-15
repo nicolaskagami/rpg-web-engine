@@ -1,0 +1,33 @@
+/create-session s2
+/enter-session s2
+$a = /create-entity Grid --height 2 --width 3
+$b = /create-entity Grid --height 1 --width 3
+$ex = /create-entity Expression --expression ($b.height > 0)
+$res = /create-entity Expression --expression ($b.height+1)
+$mod = /create-entity Modification --target $b --property height --result $res 
+$ef = /create-entity Effect --target $mod --method execute --parameters ""
+$area = /create-entity Expression --expression ($a.height*$a.width)
+$attr = /create-entity Attribute --target $a --property area --result $area
+$finalex = /create-entity Expression --expression ($a.area+2)
+$ef2 = /create-entity Effect --target $attr --method newMod --parameters $finalex
+$p = /create-entity Process --expression $ex --effects ["$ef","$ef2"] 
+/entgine-loop-set $area,$attr,$p,$attr,$finalex
+/order-entity $area execute
+/order-entity $area execute
+/order-entity $attr apply
+/order-entity $attr execute
+/order-entity $attr execute
+/order-entity $attr execute
+/order-entity $p execute
+/order-entity $p execute
+/order-entity $finalex execute
+/order-entity $finalex execute
+/entgine-step
+/entgine-step
+/entgine-step
+/entgine-step
+/entgine-step
+/entgine-step
+/entgine-step
+/entgine-step
+/list-entities

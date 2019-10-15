@@ -11,8 +11,3 @@ const wrap = function(obj){
       console.log(JSON.stringify(object))
       console.log((object))
 
-object.a={1}
-      console.log(object.a)
-object.a={2}
-      console.log(JSON.stringify(object))
-      console.log(object.toString)

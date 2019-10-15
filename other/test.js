@@ -21,6 +21,7 @@ defGetSet(a,'str');
 a.str=2
 console.log(a.str)
 console.log("Stringified")
+console.log(Object.assign({}, a))
 a2 = JSON.parse(JSON.stringify(a))
 console.log(a2.str)
 a2.str=2
