@@ -47,8 +47,9 @@ class Entgine
     {
         var expr = new Expression({expression:expression}) 
         this.entityManager.addEntity(expr)
-        expr.execute()
+        var result = expr.execute()
         this.entityManager.removeEntity(expr.__uuid)
+        return result;
     }
     setAgentLoop(newLoop)
     {

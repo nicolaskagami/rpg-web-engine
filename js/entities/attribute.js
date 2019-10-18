@@ -41,6 +41,12 @@ class Attribute extends Entity
         {
             expr = this.__manager.getEntity(this.mods[i]) 
             if(expr)
+                expr.reset()
+        }
+        for(var i in this.mods)
+        {
+            expr = this.__manager.getEntity(this.mods[i]) 
+            if(expr)
                 this._output = expr.execute()
         }
     }

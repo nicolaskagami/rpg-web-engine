@@ -1,8 +1,9 @@
 const Entity = require('./entity');
 const EntityManager = require('./entityManager');
 const expr = require('expression-eval')
-class Expression extends Entity
+class Fn extends Entity
 {
+    //Function is an expression that can be evaluated multiple times a round, receiving different parameters at a time
     constructor({object, expression, defaultValue})
     {
         super({object: object});
@@ -11,31 +12,15 @@ class Expression extends Entity
             this.expression = expression;
             this.ast= expr.parse(expression);
             this.defaultValue = ((defaultValue != null && (typeof defaultValue === "boolean")) ? defaultValue : false)
-            this._output = null 
         }
     }
-    get output()
-    {
-        try {
-            if(this._output === null)
-                this.execute();
-            return this._output;
-        } catch (error) { return this.defaultValue; }
-    }
-    reset()
-    {
-        this._output = null;
-    }
-    evaluate()
-    {
-        return this.output;
-    }
-    execute()
+    execute(...args)
     {
         var scope = new Scope(this.__manager.getEntities());
+        for(var i in args)
+            scope['args'+i] = args[i]
         try {
-            this._output = (expr.eval(this.ast, scope))
-            return this._output;
+            return (expr.eval(this.ast, scope))
         } catch (error) { return this.defaultValue; }
     }
 }
@@ -95,4 +80,4 @@ class Scope
         return c;
     }
 }
-module.exports = Expression;
+module.exports = Fn;

@@ -117,7 +117,9 @@ new Command('execute', {
             var session = Session.getSession(socket.session)
             if(session && session.users[socket.user.username].role == "admin")
             {
-                session.entgine.execute(args)
+                var result = session.entgine.execute(args)
+                socket.emit('message', {username:"Result",message:result});
+                return result;
             } 
         }
     }
