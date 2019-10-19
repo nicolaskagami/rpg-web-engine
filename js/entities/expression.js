@@ -1,6 +1,7 @@
 const Entity = require('./entity');
 const EntityManager = require('./entityManager');
 const expr = require('expression-eval')
+const Trigger = require('./trigger');
 class Expression extends Entity
 {
     constructor({object, expression, defaultValue})
@@ -58,10 +59,13 @@ class Scope
             for (const key of Object.keys(__entities[ent])) 
                 internalScope[key] = __entities[ent][key];
             return internalScope;
-            console.log(internalScope)
         } else {
             return null;    
         }
+    }
+    static trigger(...args)
+    {
+        Trigger.trigger(__entities,...args)
     }
     FILTER(array,expression)
     {
@@ -84,6 +88,10 @@ class Scope
                 if(c[i] === c[j])
                     c.splice(j--, 1);
         return c;
+    }
+    TRIGGER(...args)
+    {
+        return Scope.trigger(...args);
     }
     AND(a,b)
     {

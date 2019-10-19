@@ -162,7 +162,7 @@ function nextLine()
 }
 rl.on('line', function(line) {
     if (line[0] == "<" && line.length > 1) {
-        var file = line.match(/[a-zA-Z0-9.]+\b/)[0];
+        var file = line.match(/[a-zA-Z0-9_.]+\b/)[0];
         var readInterface = readline.createInterface({
             input: fs.createReadStream(file,'utf-8')
         });

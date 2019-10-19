@@ -1,0 +1,11 @@
+/create-session s1
+/enter-session s1
+$a = /create-entity Grid --height 2 --width 3
+$b = /create-entity Grid --height 1 --width 3
+$res = /create-entity Expression --expression ($b.height+1)
+$mod = /create-entity Modification --target $b --property height --result $res 
+$ef = /create-entity Effect --target $mod --method execute --parameters ""
+$fn = /create-entity Fn --expression (args0 == 'fart')
+$tri = /create-entity Trigger --fn $fn --effect $ef
+/execute TRIGGER('fart')
+/list-entities
