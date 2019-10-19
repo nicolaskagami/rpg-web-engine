@@ -1,0 +1,6 @@
+/create-session s1
+/enter-session s1
+$a = /create-entity Grid --height 2 --width 3
+$fn = /create-entity Fn --expression ((args0>3)?3:(args0<0)?0:args0)
+$prop = /create-entity Property --target $a --property hp --setter $fn 
+/list-entities
