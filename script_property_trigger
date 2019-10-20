@@ -1,0 +1,18 @@
+/create-session s1
+/enter-session s1
+$a = /create-entity Grid --height 2 --width 3
+$b = /create-entity Grid --height 1 --width 3
+$res = /create-entity Expression --expression ($b.height+1)
+$mod = /create-entity Modification --target $b --property height --result $res
+$ef = /create-entity Effect --target $mod --method execute --parameters ""
+$fn = /create-entity Fn --expression (args0 == 'fart')
+$tri = /create-entity Trigger --fn $fn --effect $ef
+$res2 = /create-entity Fn --expression (args0)
+$mod2 = /create-entity Modification --target "stub" --property overheal --result $res2
+$ef2 = /create-entity Effect --target $mod2 --method execute --parameters ""
+$fn2 = /create-entity Fn --expression ((args0 == 'overheal')?($mod2.setTarget(args1)&&$ef2.setParameters(args2)):false)
+$tri2 = /create-entity Trigger --fn $fn2 --effect $ef2
+$fn3 = /create-entity Fn --expression ((args0>3)?(TRIGGER('overheal',$a.__uuid,args0-3)||3):(args0<=0)?(TRIGGER('fart')||0):args0)
+$prop = /create-entity Property --target $a --property hp --setter $fn3
+/execute $prop.apply()
+/list-entities

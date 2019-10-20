@@ -13,9 +13,15 @@ class Effect extends Entity
             this.parameters = parameters;
         }
     }
+    setParameters(param)
+    {
+        this.parameters = param
+        return true;
+    }
     execute()
     {
         var target = this.__manager.getEntity(this.target)
+        console.log("effect exec target:", target)
         if(target)
             target[this.method](this.parameters)
     }

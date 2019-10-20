@@ -1,6 +1,7 @@
 const Entity = require('./entity');
 const EntityManager = require('./entityManager');
 const expr = require('expression-eval')
+const Trigger = require('./trigger')
 class Fn extends Entity
 {
     //Function is an expression that can be evaluated multiple times a round, receiving different parameters at a time
@@ -13,6 +14,10 @@ class Fn extends Entity
             this.ast= expr.parse(expression);
             this.defaultValue = ((defaultValue != null && (typeof defaultValue === "boolean")) ? defaultValue : false)
         }
+    }
+    evaluate(...args)
+    {
+        return this.execute(...args)
     }
     execute(...args)
     {
@@ -43,10 +48,13 @@ class Scope
             for (const key of Object.keys(__entities[ent])) 
                 internalScope[key] = __entities[ent][key];
             return internalScope;
-            console.log(internalScope)
         } else {
             return null;    
         }
+    }
+    static trigger(...args)
+    {
+        Trigger.trigger(__entities,...args)
     }
     FILTER(array,expression)
     {
@@ -69,6 +77,10 @@ class Scope
                 if(c[i] === c[j])
                     c.splice(j--, 1);
         return c;
+    }
+    TRIGGER(...args)
+    {
+        return Scope.trigger(...args);
     }
     AND(a,b)
     {

@@ -13,10 +13,13 @@ class Trigger extends Entity
     }
     evaluate(triggerType,entity,...args)
     {
+        console.log("Trigger:"+triggerType, entity,args)
         var fn = this.__manager.getEntity(this.fn)
         var eff = this.__manager.getEntity(this.effect)
         if(fn && fn.execute(triggerType,entity,...args) && eff)
+        {
             eff.execute()
+        }
     }
     static trigger(ents,triggerType,entity,...args)
     {

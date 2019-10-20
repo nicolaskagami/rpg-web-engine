@@ -16,8 +16,6 @@ class Property extends Entity
     }
     get output()
     {
-        if(this._output === null)
-            this.execute();
         return this._output;
     }
     set output(newValue)

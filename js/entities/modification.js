@@ -13,12 +13,21 @@ class Modification extends Entity
             this.result = result;
         }
     }
-    execute()
+    setTarget(target)
+    {
+        this.target = target;
+        return true;
+    }
+    execute(...args)
     {
         var expr = this.__manager.getEntity(this.result)
         var target = this.__manager.getEntity(this.target)
         if(target && expr)
-            target[this.property] = expr.evaluate();
+        {
+            console.log(target)
+            target[this.property] = expr.evaluate(...args);
+            console.log(target)
+        }
     }
     end()
     {
