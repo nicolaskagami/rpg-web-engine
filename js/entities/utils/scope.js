@@ -1,4 +1,5 @@
 const expr = require('expression-eval')
+const Trigger = require('../trigger')
 var __entities ={};
 class Scope
 {
@@ -25,6 +26,19 @@ class Scope
     static trigger(...args)
     {
         Trigger.trigger(__entities,...args)
+    }
+    SUM_OVER(array,expression)
+    {
+        var result = 0;
+        for(var i=0; i < array.length;i++) 
+        {
+            var obj= '';
+            var ast2 = expr.parse(expression)
+            var internalScope = Scope.newInternalScope(array[i]);
+            if(internalScope != null)
+                result += expr.eval(ast2, internalScope)
+        }
+        return result;
     }
     FILTER(array,expression)
     {

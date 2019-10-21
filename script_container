@@ -1,0 +1,10 @@
+/create-session s1
+/enter-session s1
+$a = /create-entity Grid --height 2 --width 3
+$b = /create-entity Grid --height 1 --width 3
+$c = /create-entity Grid --height 1 --width 3
+$ex = /create-entity Fn --expression (args0.__type == 'Grid' && (SUM_OVER(args1,'width')<8))
+$cont = /create-entity Container --expression $ex
+/execute $cont.insert($a.__uuid)
+/execute $cont.insert($b.__uuid)
+/execute $cont.insert($c.__uuid)
