@@ -1,0 +1,9 @@
+/create-session s1
+/enter-session s1
+$a = /create-entity Entity
+$b = /create-entity Entity
+$l = /create-entity Location
+/execute $l.setPosition($a.__uuid, [1,2])
+/execute $l.setPosition($b.__uuid, [2,3])
+/execute $l.getDistance($a.__uuid,$b.__uuid)
+/list-entities

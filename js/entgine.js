@@ -45,6 +45,7 @@ class Entgine
     }
     execute(expression)
     {
+        //Cannot pass object parameters
         var expr = new Expression({expression:expression}) 
         this.entityManager.addEntity(expr)
         var result = expr.execute()
