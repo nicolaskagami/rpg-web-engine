@@ -13,14 +13,21 @@ class Location extends Entity
     setPosition(entity, position)
     {
         this.entities[entity] = position;
-        console.log(this.entities)
     }
     getDistance(A, B)
     {
         var distance = []
         if(this.entities[A] && this.entities[B])
-            for(var i in this.entities[A])
-                distance[i] = this.entities[B][i] - this.entities[A][i] 
+        {
+            var length = (this.entities[A].length > this.entities[B].length)? 
+                this.entities[A].length : this.entities[B].length
+            for(var i = 0; i < length; i++)
+            {
+                var a = (this.entities[A][i]) ? this.entities[A][i] : 0
+                var b = (this.entities[B][i]) ? this.entities[B][i] : 0
+                distance[i] = b - a
+            }
+        }
         return distance;
     }
 
