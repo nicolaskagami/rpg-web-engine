@@ -9,7 +9,7 @@ class FieldType extends Entity
             this.name = name;
         }
     }
-    interact(x0,x1,y0,y1, intensity )
+    interact(entity, startPosition, endPosition, intensity, fields)
     {}
 }
 module.exports = FieldType;

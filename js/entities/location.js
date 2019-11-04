@@ -6,10 +6,12 @@ class Location extends Entity
         super({object: object});
         if(object == null)
         {
-            this.entities = {};
-             
+            this.entities = {}; //[ent_uuid]: position
+            this.fieldTypes = {}; //[name]: uuid
+            this.fields = {}; //[ent_uuid]: fieldType name
         }
     }
+    //An associated field can be set with the position of its bearer
     setPosition(entity, position)
     {
         this.entities[entity] = position;
@@ -29,6 +31,39 @@ class Location extends Entity
             }
         }
         return distance;
+    }
+
+    setFieldType(fieldTypeUUID)
+    {
+        var fieldTypeEnt = this.__manager.getEntity(fieldTypeUUID)
+        if(fieldTypeEnt && !this.fieldTypes[fieldTypeEnt.name])
+        {
+            this.fieldTypes[fieldTypeEnt.name] = fieldTypeUUID;
+        }
+    }
+    setField(fieldUUID)
+    {
+        var fieldEnt = this.__manager.getEntity(fieldUUID)
+        if(fieldEnt && !this.fields[fieldUUID])
+        {
+            this.fields[fieldUUID] = fieldEnt.type;
+        }
+    }
+    traverse(entity, fieldType, endPosition,intensity)
+    {
+        if(this.fieldTypes[fieldType] && this.entities[entity])
+        {
+            var fieldTypeEnt = this.__manager.getEntity(this.fieldTypes[fieldType])
+            var fields = {}
+            for(var i in this.fields)
+            {
+                if(this.fields[i] == fieldType)
+                {
+                }
+            }
+            fieldTypeEnt.interact(entity, this.entities[entity], endPosition, intensity, fields) 
+        }
+         
     }
 
 }

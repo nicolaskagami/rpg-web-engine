@@ -17,16 +17,17 @@ class Field extends Entity
     //step size
     //starting position (x,y,z...) (offset)
     //dimensions (length of each dimension)
-    constructor( { object, stepSize, type, dimensions, offset })
+    //offset: where the origin starts in relation to the position of the field
+    constructor({ object, stepSize, type, dimensions, offset })
     {
         super({object: object});
         if(object == null)
         {
             if(dimensions)
                 this.field = createNDimArray(dimensions);
+            this.dimensions = dimensions
             this.stepSize = stepSize;
             this.type = type;
-
         }
     }
 }
