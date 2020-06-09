@@ -1,0 +1,35 @@
+{
+    "settings": {
+        "hasHeaders": true,
+        "showPopoutIcon": false,
+        "showMaximiseIcon": false,
+        "showCloseIcon": false
+    },
+    "content": [{
+        "type": "row",
+        "content": [
+            {
+                "title": "Game Screen",
+                "type": "react-component",
+                "component": "game-screen",
+                "width": 70,
+                "isClosable": false
+            },
+            {
+                "type": "stack",
+                "content": [
+                    {
+                        "title": "Chat",
+                        "type": "react-component",
+                        "component": "chat"
+                    },
+                    {
+                        "title": "Character Sheet",
+                        "type": "react-component",
+                        "component": "character-sheet"
+                    }
+                ]
+            }
+        ]
+    }]
+}
