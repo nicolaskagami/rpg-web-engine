@@ -65,12 +65,12 @@ function consoleOut(msg)
     console.log(msg);
     resetPrompt()
 }
-
+/*
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     completer: autoComplete
-});
+});*/
 
 function resetPrompt()
 {

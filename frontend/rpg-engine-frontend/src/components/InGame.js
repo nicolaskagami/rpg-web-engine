@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import GoldenLayout from 'golden-layout';
 import $ from 'jquery';
 import layout from '../defaultLayout';
-import Chat from './Chat.js';
+import Chat from './Chat/Chat.js';
 import GameScreen from './GameGrid.js';
 import CharacterSheet from './CharacterSheet.js';
 

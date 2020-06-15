@@ -1,0 +1,14 @@
+root {
+  padding: "2px 4px";
+  display: "flex";
+  align-items: "center";
+}
+
+inputBar {
+  flex: 1;
+}
+
+iconButton {
+  padding: 10;
+  align-items: flex-end;
+}
