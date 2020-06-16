@@ -13,16 +13,23 @@ window.ReactDOM = ReactDOM;
 class InGame extends Component {
 
     componentDidMount() {
-        var gameLayout = new GoldenLayout(layout, $('#game-layout'));
-        gameLayout.registerComponent('chat', Chat);
-        gameLayout.registerComponent('game-screen', GameScreen);
-        gameLayout.registerComponent('character-sheet', CharacterSheet);
-        gameLayout.init();
+        var gameLayout = this.createLayout(layout, $('#game-layout'));
+        $(window).resize(function () {
+            gameLayout.updateSize();
+        });
+    }
+
+    createLayout(config, container) {
+        var layout = new GoldenLayout(config, $(container));
+        layout.registerComponent('chat', Chat);
+        layout.registerComponent('game-screen', GameScreen);
+        layout.registerComponent('character-sheet', CharacterSheet);
+        layout.init();
+        return layout;
     }
 
     render() {
-        return <div className="InGame" >
-            <div id="game-layout" style={{width:"100vw", height:"100vh"}}></div>
+        return <div className="InGame" id="game-layout" style={{ width: "100vw", height: "100vh" }}>
         </div>
     };
 }
