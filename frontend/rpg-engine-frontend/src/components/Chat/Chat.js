@@ -25,7 +25,7 @@ class Chat extends Component {
                 timestamp: "10:43"
             }
         ];
-        return <div className="Chat">
+        return <div className="Chat" style={{ width: "100%", margin: "0"}}>
             {messages.map((message, index) => <ChatMessage key={index} message={message}> </ChatMessage>)}
             <ChatInput></ChatInput>
         </div>

@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import  Login  from './components/Login.js';
 import Lobby from './components/Lobby.js';
 import InGame from './components/InGame.js';
+import './App.css';
 //import Front from './frontend-client.js';
 
 class App extends Component {
@@ -17,7 +18,7 @@ class App extends Component {
   }
 
   render() {
-    return <div className="App">
+    return <div className="App" style={{ width: "100%"}}>
       <Switch>
         <Route exact path="/login" component={Login} />
         <Route exact path="/lobby" component={Lobby} />

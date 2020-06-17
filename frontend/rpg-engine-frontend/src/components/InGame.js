@@ -6,6 +6,7 @@ import layout from '../defaultLayout';
 import Chat from './Chat/Chat.js';
 import GameScreen from './GameGrid.js';
 import CharacterSheet from './CharacterSheet.js';
+import './InGame.css';
 
 window.React = React;
 window.ReactDOM = ReactDOM;
@@ -29,7 +30,7 @@ class InGame extends Component {
     }
 
     render() {
-        return <div className="InGame" id="game-layout" style={{ width: "100vw", height: "100vh" }}>
+        return <div className="InGame" id="game-layout" style={{ width: "100%", height: "100vh",}}>
         </div>
     };
 }

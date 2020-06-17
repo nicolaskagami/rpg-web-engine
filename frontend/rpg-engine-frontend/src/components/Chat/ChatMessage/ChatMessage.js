@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './ChatMessage.css';
+import './ChatMessage.css'
+import Paper from '@material-ui/core/Paper';
 
 const Title = ({ agent, action, complement, target }) => <p> {agent} <span>{action}</span> {complement} {target} </p>;
 const MessageContent = ({ message }) => <p> {message} </p>;
@@ -33,7 +34,7 @@ const DamageRoll = ({ damageRollList, weapon }) => {
 };
 
 const Die = ({ imageURL, numberOfDice }) => <a> this is {numberOfDice} dice </a>;
-const Timestamp = ({ message }) => <a> {message} </a>;
+const Timestamp = ({ message }) => <a className="time-stamp"> {message} </a>;
 
 class ChatMessage extends Component {
 
@@ -44,9 +45,13 @@ class ChatMessage extends Component {
     render() {
         const message = this.props.message;
         return <div className="ChatMessage" >
-            <Title agent={message.source} ></Title>
-            <MessageContent message={message.message}></MessageContent>
-            <Timestamp message={message.timestamp}></Timestamp>
+
+            <div className="chat-contents">
+                <Title agent={message.source} ></Title>
+                <MessageContent message={message.message}></MessageContent>
+                <Timestamp message={message.timestamp}></Timestamp>
+            </div>
+
         </div>
     };
 }
