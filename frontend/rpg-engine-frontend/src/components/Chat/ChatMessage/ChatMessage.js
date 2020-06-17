@@ -49,7 +49,9 @@ class ChatMessage extends Component {
             <div className="chat-contents">
                 <Title agent={message.source} ></Title>
                 <MessageContent message={message.message}></MessageContent>
-                <Timestamp message={message.timestamp}></Timestamp>
+                <div className="time-stamp">
+                    <Timestamp message={message.timestamp}></Timestamp>
+                </div>
             </div>
 
         </div>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import "./GameGrid.css"
 
 class GameGrid extends Component {
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import "./CharacterSheet.css"
 
 class CharacterSheet extends Component {
 

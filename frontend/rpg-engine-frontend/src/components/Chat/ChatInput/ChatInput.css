@@ -1,14 +1,11 @@
-root {
-  padding: "2px 4px";
-  display: "flex";
-  align-items: "center";
+.ChatInput {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  padding-top: 2rem;
 }
 
-inputBar {
-  flex: 1;
-}
-
-iconButton {
-  padding: 10;
-  align-items: flex-end;
+.Input-box {
+  margin: 1rem 2% 1rem 2%;
+  justify-content: center;
+  align-items:flex-end;
 }

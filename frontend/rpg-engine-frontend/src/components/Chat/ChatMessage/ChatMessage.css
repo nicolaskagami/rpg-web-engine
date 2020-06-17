@@ -1,21 +1,31 @@
 .ChatMessage {
     width: 100%;
+    height: auto;
+    position: relative;
+    top: 2rem;
 }
 
 .time-stamp {
     text-align: right;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 500;
+    font-size: .8rem;
+    opacity: .6;
+    position: relative;
+    top:.3rem;
 }
 
 .chat-contents {
     width: 96%;
     height: 100%;
     color: #F0F0F0;
-    background-color: black;
+    background-color: #1F1F1F;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: .9rem;
     border-collapse: collapse;
     overflow: inherit;
     box-sizing: border-box;
-    margin: 2% !important;
+    margin: .5rem 2%;
+    padding: .01rem 1rem 1rem 1.6rem;
 }
