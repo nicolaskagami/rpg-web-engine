@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "autoprefixer": "^9.8.0",
     "babel-cli": "^6.26.0",
     "golden-layout": "^1.5.9",
     "jquery": "^3.5.1",
