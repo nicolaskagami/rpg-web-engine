@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import './Login.css';
 import { Copyright } from './Copyright';
 
 
@@ -46,17 +46,16 @@ export default function Login() {
                 <Avatar className={classes.avatar}>
                     <LockOutlinedIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
+
                 <form className={classes.form} noValidate>
                     <TextField
+                        className="form-inputbox"
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
+                        label="Email"
                         name="email"
                         autoComplete="email"
                         autoFocus
@@ -79,27 +78,28 @@ export default function Login() {
                     <Button
                         type="submit"
                         fullWidth
-                        variant="contained"
-                        color="primary"
                         className={classes.submit}
+                        color="red"
                     >
                         Sign In
                     </Button>
                     <Grid container>
-                        <Grid item xs>
+                        <Grid item xs className="forgotPassword">
                             <Link href="/game" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="/lobby" variant="body2">
-                                {"Don't have an account? Sign Up"}
+                                Forgot your password?
                             </Link>
                         </Grid>
                     </Grid>
                 </form>
+                <Typography component="h1" variant="h5" className='title'>
+                    New here?
+                </Typography>
+                <Link href="/lobby" variant="body2" className='signUp'>
+                    {"SIGN UP"}
+                </Link>
+                
             </div>
-            <Box mt={8}>
+            <Box mt={8} className="copyRight">
                 <Copyright />
             </Box>
         </Container>

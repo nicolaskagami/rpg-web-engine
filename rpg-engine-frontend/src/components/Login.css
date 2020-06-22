@@ -1,0 +1,91 @@
+html {
+    background-image: url(https://capitalgaming.mx/wp-content/uploads/2020/04/Dungeons-Dragons-movie-2021-2100x1200.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+body {
+    background: none !important;
+    color: white !important;
+}
+
+
+
+/* Sign In */
+.MuiFormLabel-root {
+    color: #fff !important;
+    border-color: #fff !important;
+}
+
+.MuiInputBase-input {
+    color: white !important;
+}
+
+.MuiButton-label {
+    border-radius: 0;
+    background-color: white;
+    font-family: Roboto Condensed;
+    padding: .5rem;
+}
+
+.MuiButton-label:hover {
+    opacity: .9;
+    transition: opacity .2s ease-in-out;
+}
+
+
+
+/* Sign Up */
+.title {
+    text-align: center;
+    padding-top: 4rem;
+    padding-bottom: 1.5rem;
+    color: white;
+}
+
+.signUp {
+    text-align: center;
+    margin: 0 auto;
+    color: #d1d1d1 !important;
+    border-radius: 0;
+    background-color: rgb(19, 19, 19);
+    font-family: Roboto Condensed !important;
+    padding: .6rem;
+    font-size: .9rem !important;
+    width: 380px;
+    text-decoration: none !important;
+}
+
+.signUp:hover {
+    opacity: .9;
+    transition: opacity .2s ease-in-out;
+}
+
+
+
+/* Links */
+
+.MuiLink-underlineHover {
+    color: white !important;
+}
+
+.forgotPassword {
+    color: #fff !important;
+    text-align: center !important;
+
+}
+
+.MuiTypography-colorTextSecondary {
+    color: #fff !important;
+}
+
+
+
+/*
+.MuiInputBase-root {
+    color: white !important;
+    border-radius: 0 !important;
+    border-color: white !important;
+}
+*/
