@@ -71,11 +71,16 @@ div.lm_close_tab {
 
 .lm_header {
     background-color: #AFAFAF;
-}
+
+    }
 
 
 
 /* Contents */
+
+.lm_items {
+    
+}
 
 .lm_content {
     background-color: #AFAFAF;

@@ -47,11 +47,13 @@ class Chat extends Component {
         // Needs fixed position on .ChatInput, CSS doesn't work properly
         // Needs height:% on .chat-log instead of fixed height
 
-        return <div className="Chat" style={{ width: "100%", height: "100%"}}> 
-           <div className="chat-log"> 
-               {messages.map((message, index) => <ChatMessage key={index} message={message}> </ChatMessage>)}
-           </div>
-            <ChatInput></ChatInput>
+        return <div className="Chat" style={{width: "100%", height: "100%", margin: "0 auto"}}>
+                <div className="chatOutput">
+                    <div className="chat-log" style={{ width: "100%", height: "auto"}}>
+                    {messages.map((message, index) => <ChatMessage key={index} message={message}> </ChatMessage>)}
+                    </div>
+                </div>
+                <ChatInput></ChatInput>
         </div>
     };
 }

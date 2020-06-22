@@ -1,8 +1,9 @@
 .ChatMessage {
+    box-sizing: border-box;
     width: 100%;
-    height: auto;
+    height: fit-content;
     position: relative;
-    top: 2rem;
+    top: 1rem;
 }
 
 .time-stamp {
@@ -16,10 +17,10 @@
 }
 
 .chat-contents {
+    height: auto;
     width: 96%;
-    height: 100%;
     color: #F0F0F0;
-    background-color: #1F1F1F;
+    background-color: #2e2e2e;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: .9rem;
@@ -29,11 +30,24 @@
     padding: .01rem 1rem 1rem 1.6rem;
 }
 
-.chat-log {
-    margin-top: 2.3rem;
-    margin-right: 2%;
-    overflow-y: scroll;
-    box-shadow: inset 0 3px 3px #979797;
-    height: 300px;
+.Chat {
+    box-sizing: border-box;
+    height: 100%;
+    padding-bottom: 5rem;
+    padding-top: 2rem;
+}
 
+.chatOutput {
+    box-sizing: border-box;
+    margin: 0 2%;
+    height: 100%;
+    width: 96%;
+    overflow-y: scroll;
+}  
+
+
+.chat-log {
+    width: 98% !important;
+    margin-right: 0 2% 0 0;
+    box-shadow: inset 0 3px 3px #979797;
 }
