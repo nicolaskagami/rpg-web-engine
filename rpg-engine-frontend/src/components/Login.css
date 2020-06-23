@@ -3,6 +3,7 @@ html {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Teko:wght@300;400;700&display=swap');
 }
 
 body {
@@ -12,20 +13,47 @@ body {
 
 
 
-/* Sign In */
+/* Sign In form*/
 .MuiFormLabel-root {
     color: #fff !important;
     border-color: #fff !important;
+    position: absolute !important;
+    top: 3px !important;
 }
 
 .MuiInputBase-input {
     color: white !important;
 }
 
+.MuiInputBase-root {
+    margin-bottom: 10px;
+}
+
+.PrivateNotchedOutline-root-5.MuiOutlinedInput-notchedOutline {
+    position: absolute;
+    top: 0;
+}
+
+.MuiInputLabel-outlined.MuiInputLabel-shrink {
+    transform: translate(14px, -22px) scale(0.8) !important;
+    opacity: .8;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.PrivateNotchedOutline-legendNotched-8 {
+    display: none !important;
+}
+
+
+
+
+/* Sign In button*/
 .MuiButton-label {
     border-radius: 0;
     background-color: white;
-    font-family: Roboto Condensed;
+    font-family: 'Roboto Condensed', sans-serif !important;
+    letter-spacing: .07rem !important;
     padding: .5rem;
 }
 
@@ -36,7 +64,9 @@ body {
 
 
 
-/* Sign Up */
+
+
+/* Sign Up form*/
 .title {
     text-align: center;
     padding-top: 4rem;
@@ -44,17 +74,22 @@ body {
     color: white;
 }
 
+
+
+
+/* Sign Up button*/
 .signUp {
     text-align: center;
     margin: 0 auto;
-    color: #d1d1d1 !important;
+    width: 97%;
+    padding: .6rem;
     border-radius: 0;
     background-color: rgb(19, 19, 19);
-    font-family: Roboto Condensed !important;
-    padding: .6rem;
+    color: #d1d1d1 !important;
+    font-family: 'Roboto Condensed', sans-serif !important;
     font-size: .9rem !important;
-    width: 380px;
     text-decoration: none !important;
+    letter-spacing: .07rem !important;
 }
 
 .signUp:hover {
@@ -64,8 +99,8 @@ body {
 
 
 
-/* Links */
 
+/* Links */
 .MuiLink-underlineHover {
     color: white !important;
 }
@@ -79,13 +114,3 @@ body {
 .MuiTypography-colorTextSecondary {
     color: #fff !important;
 }
-
-
-
-/*
-.MuiInputBase-root {
-    color: white !important;
-    border-radius: 0 !important;
-    border-color: white !important;
-}
-*/
